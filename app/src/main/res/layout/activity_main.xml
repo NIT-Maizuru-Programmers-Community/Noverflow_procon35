@@ -78,7 +78,7 @@
         android:layout_height="93dp"
         android:layout_marginTop="228dp"
 
-        android:text="現在:\n利用可能"
+        android:text="現在:\n利用不可"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.166"
