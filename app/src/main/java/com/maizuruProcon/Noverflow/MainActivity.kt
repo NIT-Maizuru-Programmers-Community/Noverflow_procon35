@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+//このクラスが上手く出来てなさそうです
 class QRcode : AppCompatActivity() {
 
     private lateinit var qrCodeImageView: ImageView
