@@ -54,7 +54,7 @@ class QRcode : AppCompatActivity() {
 
     private fun generateQRCode(content: String): Bitmap {
         val writer = QRCodeWriter()
-        val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 512, 512)
+        val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 148, 152)
         val width = bitMatrix.width
         val height = bitMatrix.height
         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
