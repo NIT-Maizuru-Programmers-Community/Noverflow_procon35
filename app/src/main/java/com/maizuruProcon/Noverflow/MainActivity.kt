@@ -40,6 +40,7 @@ private fun generateQRCode(content: String): Bitmap {
     return bmp
 }
 
+//このクラスでQRを生成
 class QR : AppCompatActivity() {
 
     private lateinit var imageView: ImageView
