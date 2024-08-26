@@ -26,20 +26,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-private fun generateQRCode(content: String): Bitmap {
-    val writer = QRCodeWriter()
-    val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 148, 152)
-    val width = bitMatrix.width
-    val height = bitMatrix.height
-    val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
-    for (x in 0 until width) {
-        for (y in 0 until height) {
-            bmp.setPixel(x, y, if (bitMatrix[x, y]) 0xFF000000.toInt() else 0xFFFFFFFF.toInt())
-        }
-    }
-    return bmp
-}
-
 //このクラスでQRを生成
 class QR : AppCompatActivity() {
 
