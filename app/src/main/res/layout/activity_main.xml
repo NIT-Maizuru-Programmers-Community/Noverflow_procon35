@@ -8,20 +8,21 @@
     android:rotationX="0"
     tools:context=".MainActivity" >
 
+    <!--        commit test3-->
+
     <Button
         android:id="@+id/button1"
         android:layout_width="300dp"
         android:layout_height="150dp"
-        android:layout_marginBottom="108dp"
+        android:layout_marginBottom="100dp"
         android:background="@drawable/design"
         android:text="撮る"
         android:textSize="100sp"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintHorizontal_bias="0.459"
         app:layout_constraintStart_toStartOf="parent" />
-<!--        commit test3-->
 
     <TextView
         android:id="@+id/textView1"
