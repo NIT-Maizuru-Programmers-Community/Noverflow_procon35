@@ -7,8 +7,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 import android.graphics.Bitmap
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
@@ -26,38 +24,21 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-//このクラスでQRを生成
-class QR : AppCompatActivity() {
 
-    private lateinit var imageView: ImageView
-    private val handler = Handler(Looper.getMainLooper())
-    private val updateInterval: Long = 20 * 60 * 1000 // 20分（ミリ秒）
+class QR : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        imageView = findViewById(R.id.qrCodeImageView)
-        updateQRCode()
-
-        // 20分ごとにQRコードを更新
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                updateQRCode()
-                handler.postDelayed(this, updateInterval)
-            }
-        }, updateInterval)
-    }
-
-    private fun updateQRCode() {
-        val dynamicContent = "Dynamic content here" // 動的なコンテンツを設定
-        val qrCodeBitmap = generateQRCode(dynamicContent)
-        imageView.setImageBitmap(qrCodeBitmap)
+        val qrCodeImageView: ImageView = findViewById(R.id.qrCodeImageView)
+        val qrCodeBitmap = generateQRCode("https://www.maizuru-ct.ac.jp/")
+        qrCodeImageView.setImageBitmap(qrCodeBitmap)
     }
 
     private fun generateQRCode(content: String): Bitmap {
         val writer = QRCodeWriter()
-        val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 148, 152)
+        val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 148, 148)
         val width = bitMatrix.width
         val height = bitMatrix.height
         val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
