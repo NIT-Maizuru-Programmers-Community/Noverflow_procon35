@@ -9,10 +9,12 @@ import androidx.core.view.WindowInsetsCompat
 import android.graphics.Bitmap
 import android.widget.ImageView
 import com.google.zxing.BarcodeFormat
-import com.google.zxing.qrcode.QRCodeWriter
-import android.graphics.Color
-import com.google.zxing.WriterException
-import android.util.Log
+import com.google.zxing.common.BitMatrix
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import com.journeyapps.barcodescanner.BarcodeEncoder
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,42 +26,50 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets///apple apple
         }
-    }
-}
 
-class QR : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        // ImageViewの参照を取得
-        val qrCodeImage: ImageView = findViewById(R.id.qr_code_image)
+        fun createBitMatrix(data: String): BitMatrix? {
+            val multiFormatWriter = MultiFormatWriter()
+            val hints = mapOf(
+                // マージン
+                EncodeHintType.MARGIN to 0,
+                // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
+                EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
+            )
 
-        // アクティビティの起動時にQRコードを生成
-        generateQRCode(qrCodeImage)
-    }
-
-    private fun generateQRCode(qrCodeImage: ImageView) {
-        // QRコードに変換するURL
-        val url = "https://www.maizuru-ct.ac.jp/"
-        val writer = QRCodeWriter()
-        try {
-            // QRコードを生成
-            val bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 200, 200)
-            val bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.RGB_565)
-            for (x in 0 until 200) {
-                for (y in 0 until 200) {
-                    // QRコードのピクセルを設定
-                    bitmap.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
-                }
-            }
-            // 生成したQRコードをImageViewに設定
-            qrCodeImage.setImageBitmap(bitmap)
-            // デバッグログを出力
-            Log.d("QR", "QR code generated")
-        } catch (e: WriterException) {
-            // エラーが発生した場合のデバッグログを出力
-            Log.e("QR", "QR code generation failed", e)
+            return multiFormatWriter.encode(
+                data, // QRコード化したいデータ
+                BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
+                200, // 生成されるイメージの高さ(px)
+                200, // 生成されるイメージの横幅(px)
+                hints // オプション
+            )
         }
+
+        fun createBitmap(bitMatrix: BitMatrix): Bitmap {
+            val barcodeEncoder = BarcodeEncoder()
+            return barcodeEncoder.createBitmap(bitMatrix)
+        }
+
+        fun createQrCode(data: String): Bitmap? {
+            return try {
+                val bitMatrix = createBitMatrix(data)
+                bitMatrix?.let { createBitmap(it) }
+            } catch (e: Exception) {
+
+                null
+            }
+        }
+
+        val qrImage: ImageView = findViewById(R.id.qr_code_image)
+
+        val qrCode = createQrCode("https://www.maizuru-ct.ac.jp/")//ここを変える
+
+        qrImage.setImageBitmap(qrCode)
+
+
+
+
     }
 }
+
