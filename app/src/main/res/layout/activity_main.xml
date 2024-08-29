@@ -49,11 +49,11 @@
 
     <ImageView
         android:id="@+id/qr_code_image"
-        android:layout_width="149dp"
-        android:layout_height="143dp"
-        android:layout_marginTop="252dp"
+        android:layout_width="184dp"
+        android:layout_height="184dp"
+        android:layout_marginTop="228dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.904"
+        app:layout_constraintHorizontal_bias="0.929"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -79,7 +79,7 @@
         android:text="現在:\n利用可能"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.166"
+        app:layout_constraintHorizontal_bias="0.129"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -87,13 +87,13 @@
         android:id="@+id/textView4"
         android:layout_width="171dp"
         android:layout_height="80dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="28dp"
         android:text="残り時間\n00:00"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias="0.027"
+        app:layout_constraintVertical_bias="0.012"
         tools:ignore="MissingConstraints" />
 
 

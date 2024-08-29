@@ -14,6 +14,7 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +26,10 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets///apple apple
+        }
+
+        fun generateRandomFourDigitNumber(): Int {
+            return Random.nextInt(1000, 10000)
         }
 
 
@@ -63,7 +68,12 @@ class MainActivity : AppCompatActivity() {
 
         val qrImage: ImageView = findViewById(R.id.qr_code_image)
 
-        val qrCode = createQrCode("https://www.maizuru-ct.ac.jp/")//ここを変える
+        // アプリケーションの起動時にランダムな4桁の数字を生成
+        val randomNumber: Int = generateRandomFourDigitNumber()
+        println("Random 4-digit number: $randomNumber")
+
+        // QRコードを生成
+        val qrCode = createQrCode(randomNumber.toString())
 
         qrImage.setImageBitmap(qrCode)
 
