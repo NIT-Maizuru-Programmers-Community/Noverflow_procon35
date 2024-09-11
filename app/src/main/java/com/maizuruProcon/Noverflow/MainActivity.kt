@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
 
         qrImage.setImageBitmap(qrCode)
 
+        //タイマー
         fixedRateTimer("timer", false, 0L, 1200000L) { //1200000ミリ秒（20分）ごとに実行
             randomNumber = generateRandomFourDigitNumber()
             println("Random 4-digit number: $randomNumber")
