@@ -16,6 +16,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlin.random.Random
 
+import kotlin.concurrent.fixedRateTimer
+
+import java.util.*
+import kotlin.concurrent.fixedRateTimer
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,17 +73,24 @@ class MainActivity : AppCompatActivity() {
         val qrImage: ImageView = findViewById(R.id.qr_code_image)
 
         // アプリケーションの起動時にランダムな4桁の数字を生成
-        val randomNumber: Int = generateRandomFourDigitNumber()
+        var randomNumber: Int = generateRandomFourDigitNumber()
         println("Random 4-digit number: $randomNumber")
 
+
         // QRコードを生成
-        val qrCode = createQrCode(randomNumber.toString())
+        var qrCode = createQrCode(randomNumber.toString())
 
         qrImage.setImageBitmap(qrCode)
 
+        fixedRateTimer("timer", false, 0L, 1200000L) { //1200000ミリ秒（20分）ごとに実行
+            randomNumber = generateRandomFourDigitNumber()
+            println("Random 4-digit number: $randomNumber")
 
-
-
+            qrCode = createQrCode(randomNumber.toString())
+            runOnUiThread {
+                qrImage.setImageBitmap(qrCode)
+            }
+        }
     }
 }
 
