@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 updateCount++
             } else {
-                this.cancel() // タイマーをキャンセル
+                this.cancel()  // タイマーをキャンセル
             }
         }
     }
