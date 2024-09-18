@@ -83,13 +83,21 @@ class MainActivity : AppCompatActivity() {
         qrImage.setImageBitmap(qrCode)
 
         //タイマー,QR更新
-        fixedRateTimer("timer", false, 0L, 1200000L) { //1200000ミリ秒（20分）ごとに実行
-            randomNumber = generateRandomFourDigitNumber()
-            println("Random 4-digit number: $randomNumber")
+        var updateCount = 0
+        val maxUpdates = 4 // 最大更新回数を設定
 
-            qrCode = createQrCode(randomNumber.toString())
-            runOnUiThread {
-                qrImage.setImageBitmap(qrCode)
+        val timer = fixedRateTimer("timer", false, 0L, 300000L) { // 300000ミリ秒（5分）ごとに実行
+            if (updateCount < maxUpdates) {
+                randomNumber = generateRandomFourDigitNumber()
+                println("Random 4-digit number: $randomNumber")
+
+                qrCode = createQrCode(randomNumber.toString())
+                runOnUiThread {
+                    qrImage.setImageBitmap(qrCode)
+                }
+                updateCount++
+            } else {
+                this.cancel() // タイマーをキャンセル
             }
         }
     }
