@@ -6,31 +6,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
-import android.util.Log
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.api.IMapController
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import org.osmdroid.config.Configuration.getInstance
-import org.osmdroid.events.MapEventsReceiver
-import org.osmdroid.views.overlay.MapEventsOverlay
-import org.osmdroid.views.overlay.compass.CompassOverlay
-import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
+
 
 
 
@@ -62,7 +46,6 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 100)
         } else {
             setupMap()
-            //MapSetupController(this, mapView).setupMapWithLocation()
         }
     }
 
@@ -82,8 +65,6 @@ class MainActivity : AppCompatActivity() {
             val mapMarkerController = MapMarker(mapView)
             mapMarkerController.placeMarker(destination.latitude, destination.longitude)
         }
-
-        MapTapController(mapView, locationTextView)
     }
 
     override fun onResume() {
