@@ -33,40 +33,57 @@ import org.osmdroid.views.overlay.compass.CompassOverlay
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider
 
 
+
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private lateinit var locationTextView: TextView
-    //map変数定義
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         Configuration.getInstance().load(
-            applicationContext,PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        )//load
+            applicationContext, PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        )
 
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets///apple apple
+            insets
         }
 
-        mapView = findViewById<MapView>(R.id.mapView)
+        mapView = findViewById(R.id.mapView)
         locationTextView = findViewById(R.id.location_text)
-        // 中心位置を決める 現在地
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 100)
+        } else {
+            setupMap()
+            //MapSetupController(this, mapView).setupMapWithLocation()
         }
-        else {
-            // 位置情報を取得する
-            MapSetupController(this, mapView).setupMapWithLocation()
+    }
 
-            // マップタップイベントを設定
-            MapTapController(mapView, locationTextView)
+    private fun setupMap() {
+        val mapSetupController = MapSetupController(this, mapView)
+        mapSetupController.setupMapWithLocation { currentLocation ->
+            val destination = GeoPoint(37.41690641728752, -122.08539203847516)
+
+            // 経路を取得して描画
+            val routeFetcher = RouteFetcher()
+            routeFetcher.fetchRoute(currentLocation, destination) { routePoints ->
+                val routeController = RouteController(mapView)
+                routeController.drawRoute(routePoints)
+            }
+
+            // 目的地にマーカーを配置
+            val mapMarkerController = MapMarker(mapView)
+            mapMarkerController.placeMarker(destination.latitude, destination.longitude)
         }
+
+        MapTapController(mapView, locationTextView)
     }
 
     override fun onResume() {
@@ -79,22 +96,13 @@ class MainActivity : AppCompatActivity() {
         mapView.onPause()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 100 && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-            // 位置情報を取得する
-            MapSetupController(this, mapView).setupMapWithLocation()
-
-            // マップタップイベントを設定
-            MapTapController(mapView, locationTextView)
+            setupMap()
         }
     }
-
-
 }
+
 
 

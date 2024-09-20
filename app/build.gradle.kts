@@ -52,6 +52,10 @@ dependencies {
 
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation(libs.osmdroid)
+    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+
 
 }
 

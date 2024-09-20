@@ -23,7 +23,7 @@ class MapSetupController(private val context: Context, private val mapView: MapV
     private val tag = "MapSetupController"
     private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
-    fun setupMapWithLocation() {
+    fun setupMapWithLocation(callback: (GeoPoint) -> Unit) {
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -51,6 +51,9 @@ class MapSetupController(private val context: Context, private val mapView: MapV
                     val compassOverlay = CompassOverlay(context, InternalCompassOrientationProvider(context), mapView)
                     compassOverlay.enableCompass()
                     mapView.overlays.add(compassOverlay)
+
+                    // 現在地をコールバックで返す
+                    callback(centerPoint)
                 } else {
                     Log.d(tag, "Location not available")
                 }
