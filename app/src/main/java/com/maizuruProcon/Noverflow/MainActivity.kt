@@ -18,7 +18,7 @@ import kotlin.random.Random
 
 import kotlin.concurrent.fixedRateTimer
 
-class QR : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
