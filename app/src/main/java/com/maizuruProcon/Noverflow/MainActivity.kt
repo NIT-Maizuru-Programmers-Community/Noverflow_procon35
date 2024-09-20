@@ -79,7 +79,7 @@ class QR : AppCompatActivity() {
 
         qrImage.setImageBitmap(qrCode)
 
-        //タイマー,QR更新
+        //タイマーでQR更新
         var updateCount = 0
         val maxUpdates = 4 // 最大更新回数の設定
 
