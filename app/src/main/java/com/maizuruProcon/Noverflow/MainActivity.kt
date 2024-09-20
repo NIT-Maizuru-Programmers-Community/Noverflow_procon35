@@ -18,8 +18,8 @@ import kotlin.random.Random
 
 import kotlin.concurrent.fixedRateTimer
 
-import java.util.*
-import kotlin.concurrent.fixedRateTimer
+import android.os.CountDownTimer
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
