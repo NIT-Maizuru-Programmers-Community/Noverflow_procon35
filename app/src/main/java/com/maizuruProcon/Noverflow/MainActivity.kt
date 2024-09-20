@@ -21,7 +21,7 @@ import kotlin.concurrent.fixedRateTimer
 import android.os.CountDownTimer
 import android.widget.TextView
 
-class MainActivity : AppCompatActivity() {
+class QR : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
