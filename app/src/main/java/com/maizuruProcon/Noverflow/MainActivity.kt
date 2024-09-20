@@ -18,9 +18,6 @@ import kotlin.random.Random
 
 import kotlin.concurrent.fixedRateTimer
 
-import android.os.CountDownTimer
-import android.widget.TextView
-
 class QR : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +48,7 @@ class QR : AppCompatActivity() {
                 BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
                 200, // 生成されるイメージの高さ(px)
                 200, // 生成されるイメージの横幅(px)
-                hints // オプション
+                hints
             )
         }
 
