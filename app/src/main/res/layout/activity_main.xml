@@ -51,7 +51,7 @@
         android:id="@+id/qr_code_image"
         android:layout_width="184dp"
         android:layout_height="184dp"
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="212dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.889"
         app:layout_constraintStart_toStartOf="parent"

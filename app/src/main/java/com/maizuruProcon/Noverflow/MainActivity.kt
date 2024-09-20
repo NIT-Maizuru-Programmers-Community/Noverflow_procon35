@@ -81,7 +81,7 @@ class QR : AppCompatActivity() {
 
         //タイマー,QR更新
         var updateCount = 0
-        val maxUpdates = 4 // 最大更新回数
+        val maxUpdates = 4 // 最大更新回数の設定
 
         val timer = fixedRateTimer("timer", false, 0L, 300000L) { // 300000ミリ秒（5分）ごとに実行
             if (updateCount < maxUpdates) {
