@@ -17,8 +17,6 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlin.random.Random
 
 import kotlin.concurrent.fixedRateTimer
-import android.graphics.drawable.Drawable
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 
