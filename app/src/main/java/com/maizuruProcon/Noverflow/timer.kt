@@ -35,11 +35,11 @@ class timer : Fragment() {
             override fun onTick(millisUntilFinished: Long) {
                 val minutes = millisUntilFinished / 1000 / 60
                 val seconds = millisUntilFinished / 1000 % 60
-                timerText.text = String.format("残り時間:%02d:%02d", minutes, seconds)
+                timerText.text = String.format("利用可能時間:%02d:%02d", minutes, seconds)
             }
 
             override fun onFinish() {
-                timerText.text = "残り時間:00:00"
+                timerText.text = "利用不可"
             }
         }.start()
     }

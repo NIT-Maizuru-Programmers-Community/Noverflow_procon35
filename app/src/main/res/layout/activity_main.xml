@@ -21,7 +21,7 @@
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.459"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -50,15 +50,14 @@
 
     <ImageView
         android:id="@+id/qr_code_image"
-        android:layout_width="248dp"
-        android:layout_height="230dp"
-        android:layout_marginTop="144dp"
+        android:layout_width="300dp"
+        android:layout_height="264dp"
+        android:layout_marginTop="124dp"
         android:background="@drawable/qr_code_border"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.149"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
