@@ -7,7 +7,6 @@ android {
     namespace = "com.maizuruProcon.Noverflow"
     compileSdk = 34
 
-
     defaultConfig {
         applicationId = "com.maizuruProcon.Noverflow"
         minSdk = 26
@@ -51,6 +50,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -59,9 +59,18 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.inappmessaging)
+    implementation(libs.androidx.preference.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation(libs.osmdroid)
+    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+
+
 
 }
 
@@ -82,3 +91,4 @@ dependencies {
 }
 
 //orangeorangeorange
+
