@@ -5,7 +5,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-
 import android.graphics.Bitmap
 import android.widget.ImageView
 import com.google.zxing.BarcodeFormat
@@ -15,7 +14,6 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlin.random.Random
-
 import kotlin.concurrent.fixedRateTimer
 import android.os.Handler
 import android.os.Looper
@@ -89,9 +87,9 @@ class MainActivity : AppCompatActivity() {
 
         //タイマーでQR更新
         var updateCount = 0
-        val maxUpdates = 5 // 最大更新回数の設定
+        val maxUpdates = 5 // 最大更新回数の設定(5)
 
-        val timer = fixedRateTimer("timer", false, 0L, 300000L) { // 300000ミリ秒（5分）ごとに実行
+        val timer = fixedRateTimer("timer", false, 0L, 5*60*1000L) { // 300000ミリ秒（5分）ごとに実行
             if (updateCount < maxUpdates) {
                 randomNumber = generateRandomFourDigitNumber()
                 println("Random 4-digit number: $randomNumber")
@@ -110,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                         qrImage.setImageBitmap(null) // QRコードをクリア
                         qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
                     }
-                }, 300000L) // 300000ミリ秒（5分）
+                }, 5*60*1000L) // 300000ミリ秒（5分）
             }
         }
     }
