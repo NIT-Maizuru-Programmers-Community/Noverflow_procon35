@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         mapView = findViewById(R.id.mapView)
         //locationTextView = findViewById(R.id.location_text)
-        mapView.setMultiTouchControls(true);
+        mapView.setMultiTouchControls(true)
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 100)
