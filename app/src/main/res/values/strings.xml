@@ -2,5 +2,6 @@
     <string name="app_name">Noverflow</string>
     <string name="test">kodera</string>
     <string name="asdf">kodera</string>
+    <string name="back_button_description">戻るボタン</string>
 
 </resources>
