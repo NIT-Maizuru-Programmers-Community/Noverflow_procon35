@@ -14,14 +14,14 @@
         android:id="@+id/button1"
         android:layout_width="300dp"
         android:layout_height="150dp"
-        android:layout_marginBottom="112dp"
+        android:layout_marginBottom="228dp"
         android:background="@drawable/design"
         android:text="撮る"
         android:textSize="100sp"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.54"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -57,14 +57,13 @@
         android:id="@+id/button"
         android:layout_width="230dp"
         android:layout_height="73dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="652dp"
+        android:layout_marginTop="616dp"
         android:background="?attr/selectableItemBackground"
         android:contentDescription="イメージボタン"
         android:scaleType="fitCenter"
         android:src="@drawable/count1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.088"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,10 +71,10 @@
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="624dp"
+        android:layout_marginTop="680dp"
         android:text="確認用"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.825"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,10 +82,10 @@
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="676dp"
+        android:layout_marginTop="696dp"
         android:text="Reset Total"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.91"
+        app:layout_constraintHorizontal_bias="0.398"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -21,9 +21,6 @@ class timer : Fragment() {
         val view = inflater.inflate(R.layout.timer, container, false)
         timerText = view.findViewById(R.id.timer_text)
 
-        // ドラッグ可能にするためのリスナーを設定
-        timerText.setOnTouchListener(DragTouchListener())
-
         startTimer()
         return view
     }

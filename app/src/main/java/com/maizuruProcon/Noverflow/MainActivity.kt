@@ -21,8 +21,13 @@ import android.content.Intent
 import android.widget.Button
 import android.widget.ImageButton
 import android.content.Context
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var timerFinishedReceiver: BroadcastReceiver
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -174,38 +179,51 @@ class MainActivity : AppCompatActivity() {
         var qrCode = createQrCode(randomNumber.toString())
         qrImage.setImageBitmap(qrCode)
 
-        //Fragment:timerの使用
+        // Fragment: timerの使用
         val fragment = timer()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
 
-        //タイマーでQR更新
+        // タイマーでQR更新
         var updateCount = 0
         val maxUpdates = 5 // 最大更新回数の設定(5)
 
-        val timer = fixedRateTimer("timer", false, 0L, 5*60*1000L) { // 300000ミリ秒（5分）ごとに実行
-            if (updateCount < maxUpdates) {
-                randomNumber = generateRandomFourDigitNumber()
-                println("Random 4-digit number: $randomNumber")
+        // サービスのインテントを作成し、タイマーをバックグラウンドで実行
+        val intent = Intent(this, TimerService::class.java)
+        startService(intent) // サービスを開始
 
-                qrCode = createQrCode(randomNumber.toString())
-                runOnUiThread {
-                    qrImage.setImageBitmap(qrCode)
-                }
-                updateCount++
-            } else {
-                this.cancel()  // タイマーをキャンセル
+        // タイマー終了時にQRコード更新と処理を行うためのBroadcastReceiverを登録
+        timerFinishedReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (updateCount < maxUpdates) {
+                    randomNumber = generateRandomFourDigitNumber()
+                    println("Random 4-digit number: $randomNumber")
 
-                // 更新終了5分後にQRコード生成前の画像に戻す
-                Handler(Looper.getMainLooper()).postDelayed({
+                    qrCode = createQrCode(randomNumber.toString())
                     runOnUiThread {
-                        qrImage.setImageBitmap(null) // QRコードをクリア
-                        qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+                        qrImage.setImageBitmap(qrCode)
                     }
-                }, 5*60*1000L) // 300000ミリ秒（5分）
+                    updateCount++
+                } else {
+                    // QRコードの更新終了時の処理
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        runOnUiThread {
+                            qrImage.setImageBitmap(null) // QRコードをクリア
+                            qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+                        }
+                    }, 5*60*1000L) // 300000ミリ秒（5分後に画像をクリア）
+                }
             }
         }
+
+        // BroadcastReceiverを登録
+        registerReceiver(timerFinishedReceiver, IntentFilter("TIMER_FINISHED"))
+    }
+
+    // Activity/Fragmentが終了する際にBroadcastReceiverを解除
+    override fun onDestroy() {
+        unregisterReceiver(timerFinishedReceiver)
+        super.onDestroy()
     }
 }
-
