@@ -96,18 +96,26 @@
         app:layout_constraintVertical_bias="0.012"
         tools:ignore="MissingConstraints" />
 
+
+<!--
     <org.osmdroid.views.MapView
         android:id="@+id/mapView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
-    </org.osmdroid.views.MapView> <!--map-->
 
-    <TextView
+    </org.osmdroid.views.MapView>
+    -->
+
+    <!--map-->
+
+    <!--<TextView
         android:id="@+id/location_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -117,6 +125,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/mapView" />
+        -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

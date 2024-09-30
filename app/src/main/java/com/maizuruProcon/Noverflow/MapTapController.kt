@@ -8,8 +8,14 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.Button
 
-class MapTapController(private val mapView: MapView, private val locationTextView: TextView) {
+class MapTapController(private val mapView: MapView, private val locationTextView: TextView):AppCompatActivity() {
+
+
 
     init {
         val tapOverlay = MapEventsOverlay(object : MapEventsReceiver {
