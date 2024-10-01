@@ -46,6 +46,12 @@
         </activity>
 
         <activity
+            android:name=".ThirdActivity1"
+            android:exported="false"
+            android:label="ThirdActivity1"
+            android:theme="@style/Theme.Noverflow"/>
+
+        <activity
             android:name="FourActivity"
             android:exported="false"
             android:label="FourActivity"
