@@ -53,21 +53,42 @@ class MainActivity : AppCompatActivity() {
     private fun setupMap() {
         val mapSetupController = MapSetupController(this, mapView)
         mapSetupController.setupMapWithLocation { currentLocation ->
-            val destination = GeoPoint(37.41690641728752, -122.08539203847516)
+            val destinations = listOf(
+                GeoPoint(35.47527518222683, 135.38520542552095),
+                GeoPoint(35.510810748412915, 135.39708889611526),
+                GeoPoint(35.499671772892476, 135.43918890682946)
+            )
+            val infos = listOf(380, 524, 622)
+
+            //最も近い
+            val nearestDestination = destinations.zip(infos)
+                .filter { it.second <= 500 }
+                .minByOrNull { currentLocation.distanceToAsDouble(it.first) }
+                ?.first
 
             // 経路を取得して描画
-            val routeFetcher = RouteFetcher()
-            routeFetcher.fetchRoute(currentLocation, destination) { routePoints ->
-                val routeController = RouteController(mapView)
-                routeController.drawRoute(routePoints)
-            }
+            if (nearestDestination != null) {
+                // 経路を取得して描画
+                val routeFetcher = RouteFetcher()
+                routeFetcher.fetchRoute(currentLocation, nearestDestination) { routePoints ->
+                    val routeController = RouteController(mapView)
+                    routeController.drawRoute(routePoints)
+                }
 
-            // 目的地にマーカーを配置
-            val mapMarkerController = MapMarker(mapView)
-            mapMarkerController.placeMarker(destination.latitude, destination.longitude)
+                // 目的地にマーカーを配置
+                /*val mapMarkerController = MapMarker(mapView)
+                mapMarkerController.placeMarker(
+                    nearestDestination.latitude,
+                    nearestDestination.longitude
+                )*/
+            }
+            //マーカ設置
+            val mapMarker = MapMarker(mapView)
+            destinations.forEachIndexed { index, destination ->
+                mapMarker.placeMarker(destination.latitude, destination.longitude, infos[index])
+            }
         }
     }
-
     override fun onResume() {
         super.onResume()
         mapView.onResume()
