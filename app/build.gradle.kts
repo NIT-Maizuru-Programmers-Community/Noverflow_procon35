@@ -47,8 +47,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation("com.google.zxing:core:3.4.1")
-    implementation("com.journeyapps:zxing-android-embedded:4.1.0")
+    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("androidx.core:core:1.13.1")
 
+    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
+    implementation("com.google.firebase:firebase-firestore")
 }
