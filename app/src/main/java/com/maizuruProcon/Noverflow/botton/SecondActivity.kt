@@ -9,7 +9,6 @@ import android.widget.TextView
 import com.maizuruProcon.Noverflow.R
 
 import com.maizuruProcon.Noverflow.FourActivity
-import com.maizuruProcon.Noverflow.ThirdActivity1
 
 
 class SecondActivity : AppCompatActivity() {
@@ -30,12 +29,7 @@ class SecondActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val btnBin :Button =findViewById(R.id.btnBin)
-        //2)ボタンを押したら次の画面へ
-        btnBin.setOnClickListener{
-            val intent= Intent(this, ThirdActivity1::class.java)
-            startActivity(intent)
-        }
+
 
         val tv: TextView =findViewById(R.id.tv)
         val count1in: Button=findViewById(R.id.count1in)
