@@ -20,7 +20,6 @@ class timer : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.timer, container, false)
         timerText = view.findViewById(R.id.timer_text)
-
         startTimer()
         return view
     }

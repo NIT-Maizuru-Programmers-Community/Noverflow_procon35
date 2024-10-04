@@ -9,7 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 import android.graphics.Bitmap
 import android.widget.Button
 import android.widget.ImageView
-import com.google.firebase.inappmessaging.MessagesProto
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.MultiFormatWriter
@@ -24,11 +23,14 @@ import android.content.Context
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import com.maizuruProcon.Noverflow.botton.SecondActivity
-
+import android.view.LayoutInflater
+import android.view.View
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var timerFinishedReceiver: BroadcastReceiver
+    private var randomNumber: Int? = null
+    private var qrCode: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,29 +41,27 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets///apple apple
         }
-        //1)Viewの取得
-        val btnStart: Button = findViewById(R.id.btnStart)
-        //2)ボタンを押したら次の画面へ
-        btnStart.setOnClickListener {
-            val intent = Intent(this, SecondActivity::class.java)
-            startActivity(intent)
-        }
 
         // ボタンを取得
         val imageButton: ImageButton = findViewById(R.id.button)
         val button: Button = findViewById(R.id.test)
         val resetButton: Button = findViewById(R.id.resetButton)
+        val QRbutton: Button = findViewById(R.id.button2)
+        val btnstart: Button = findViewById(R.id.btnStart)
 
         // ボタンが押された時の処理(画面遷移)
+        btnstart.setOnClickListener {
+            // Intentを作成してsecondActivityに遷移
+            val intent = Intent(this, SecondActivity::class.java)
+            startActivity(intent)
+        }
         imageButton.setOnClickListener {
             // Intentを作成してaccountActivityに遷移
             val intent = Intent(this, account::class.java)
             startActivity(intent)
         }
 
-
         // ごみを捨てた回数のカウント
-        //仮のボタンを押したら+1
 
         // SharedPreferencesの読み込み
         val sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         Singleton.plastic = sharedPref.getInt("plastic", 0)
         Singleton.kan = sharedPref.getInt("kan", 0)
 
-
+        //仮のボタンを押したら+1
         button.setOnClickListener {
             Singleton.total += 1
 
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
 
         //QRの生成と更新、タイマーの表示
         fun generateRandomFourDigitNumber(): Int {
-            return Random.nextInt(1000, 10000)
+            return Random.nextInt(1000, 9999)
         }
 
         fun createBitMatrix(data: String): BitMatrix? {
@@ -179,27 +179,37 @@ class MainActivity : AppCompatActivity() {
 
         val qrImage: ImageView = findViewById(R.id.qr_code_image)
 
-        // アプリケーションの起動時にランダムな4桁の数字を生成
-        var randomNumber: Int = generateRandomFourDigitNumber()
-        println("Random 4-digit number: $randomNumber")
+        QRbutton.setOnClickListener {
 
-        // QRコードを生成
-        var qrCode = createQrCode(randomNumber.toString())
-        qrImage.setImageBitmap(qrCode)
+            randomNumber = generateRandomFourDigitNumber()
+            println("Random 4-digit number: $randomNumber")
 
-        // Fragment: timerの使用
-        val fragment = timer()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
+            // QRコードを生成
+            qrCode = createQrCode(randomNumber.toString())
+            qrImage.setImageBitmap(qrCode)
+
+            // Fragment: timerの使用
+            val fragment = timer()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit()
+
+            // サービスのインテントを作成し、タイマーをバックグラウンドで実行
+            val intent2 = Intent(this, TimerService::class.java)
+            startService(intent2) // サービスを開始
+
+            // QRコードの更新終了時の処理
+            Handler(Looper.getMainLooper()).postDelayed({
+                runOnUiThread {
+                    qrImage.setImageBitmap(null) // QRコードをクリア
+                    qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+                }
+            }, 30 * 60 * 1000L) // 300000ミリ秒（5分後に画像をクリア）
+        }
 
         // タイマーでQR更新
         var updateCount = 0
         val maxUpdates = 5 // 最大更新回数の設定(5)
-
-        // サービスのインテントを作成し、タイマーをバックグラウンドで実行
-        val intent = Intent(this, TimerService::class.java)
-        startService(intent) // サービスを開始
 
         // タイマー終了時にQRコード更新と処理を行うためのBroadcastReceiverを登録
         timerFinishedReceiver = object : BroadcastReceiver() {
@@ -213,14 +223,6 @@ class MainActivity : AppCompatActivity() {
                         qrImage.setImageBitmap(qrCode)
                     }
                     updateCount++
-                } else {
-                    // QRコードの更新終了時の処理
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        runOnUiThread {
-                            qrImage.setImageBitmap(null) // QRコードをクリア
-                            qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
-                        }
-                    }, 5*60*1000L) // 300000ミリ秒（5分後に画像をクリア）
                 }
             }
         }

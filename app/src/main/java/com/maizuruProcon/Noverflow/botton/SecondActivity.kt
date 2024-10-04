@@ -1,14 +1,32 @@
 package com.maizuruProcon.Noverflow.botton
 import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.maizuruProcon.Noverflow.R
-
+import android.view.LayoutInflater
+import android.widget.ImageView
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.maizuruProcon.Noverflow.FourActivity
+import com.maizuruProcon.Noverflow.MainActivity
+import com.maizuruProcon.Noverflow.TimerService
+import com.maizuruProcon.Noverflow.timer
+import kotlin.random.Random
+import android.view.ViewGroup
 
 
 class SecondActivity : AppCompatActivity() {
@@ -18,18 +36,19 @@ class SecondActivity : AppCompatActivity() {
     private var count2=0
     private var count3=0
     @SuppressLint("MissingInflatedId")
+
     override fun onCreate(savedInstanceState:Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
-        //1)Viewの取得
-        val btnStart1 :Button =findViewById(R.id.btnStart1)
-        //2)ボタンを押したら次の画面へ
-        btnStart1.setOnClickListener{
-            val intent= Intent(this, FourActivity::class.java)
+
+        //ボタンの取得
+        val btnStart1: Button = findViewById(R.id.btnStart1)
+
+        //ボタンを押したら次の画面へ
+        btnStart1.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
-
-
 
         val tv: TextView =findViewById(R.id.tv)
         val count1in: Button=findViewById(R.id.count1in)
@@ -69,7 +88,6 @@ class SecondActivity : AppCompatActivity() {
             tv1.text=count1.toString()
         }
 
-
         val tv2: TextView =findViewById(R.id.tv2)
         val count3in: Button=findViewById(R.id.count3in)
         val count3re: Button=findViewById(R.id.count3re)
@@ -108,14 +126,10 @@ class SecondActivity : AppCompatActivity() {
             tv3.text=count3.toString()
         }
 
-
-
         val btnBack :Button = findViewById(R.id.btnBack)
         //3)戻るボタン(アクティビティの終了)
         btnBack.setOnClickListener{
             finish()
        }
-
     }
-
 }
