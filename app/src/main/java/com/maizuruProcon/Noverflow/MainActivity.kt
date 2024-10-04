@@ -17,7 +17,6 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import kotlin.random.Random
-import kotlin.concurrent.fixedRateTimer
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageButton
@@ -139,7 +138,6 @@ class MainActivity : AppCompatActivity() {
 
         // アプリ起動時に画像を設定
         updateImage(Singleton.total, imageButton)
-
 
         //QRの生成と更新、タイマーの表示
         fun generateRandomFourDigitNumber(): Int {
