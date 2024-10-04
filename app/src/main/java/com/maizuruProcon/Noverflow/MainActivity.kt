@@ -20,8 +20,6 @@ import kotlin.random.Random
 import kotlin.concurrent.fixedRateTimer
 import android.os.Handler
 import android.os.Looper
-import android.content.Intent
-import android.widget.Button
 import android.widget.ImageButton
 import android.content.Context
 import android.content.BroadcastReceiver
@@ -38,19 +36,16 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets///apple apple
+        }
         //1)Viewの取得
         val btnStart: Button = findViewById(R.id.btnStart)
         //2)ボタンを押したら次の画面へ
         btnStart.setOnClickListener {
             val intent = Intent(this, SecondActivity::class.java)
             startActivity(intent)
-        }
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets///apple apple
         }
 
         // ボタンを取得
@@ -231,11 +226,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-}
-
-
-
 
         // BroadcastReceiverを登録
         registerReceiver(timerFinishedReceiver, IntentFilter("TIMER_FINISHED"))
