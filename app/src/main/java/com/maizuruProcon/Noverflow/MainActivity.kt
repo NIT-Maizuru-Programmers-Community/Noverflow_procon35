@@ -1,116 +1,29 @@
 package com.maizuruProcon.Noverflow
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import android.graphics.Bitmap
-import android.widget.ImageView
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.common.BitMatrix
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.journeyapps.barcodescanner.BarcodeEncoder
-import kotlin.random.Random
-import kotlin.concurrent.fixedRateTimer
-import android.os.Handler
-import android.os.Looper
+import com.google.firebase.FirebaseApp
+import getCollectionData
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets///apple apple
-        }
 
-        fun generateRandomFourDigitNumber(): Int {
-            return Random.nextInt(1000, 10000)
-        }
-
-
-        fun createBitMatrix(data: String): BitMatrix? {
-            val multiFormatWriter = MultiFormatWriter()
-            val hints = mapOf(
-                // マージン
-                EncodeHintType.MARGIN to 0,
-                // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
-                EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-            )
-
-            return multiFormatWriter.encode(
-                data, // QRコード化したいデータ
-                BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
-                170, // 生成されるイメージの高さ(px)
-                200, // 生成されるイメージの横幅(px)
-                hints
-            )
-        }
-
-        fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-            val barcodeEncoder = BarcodeEncoder()
-            return barcodeEncoder.createBitmap(bitMatrix)
-        }
-
-        fun createQrCode(data: String): Bitmap? {
-            return try {
-                val bitMatrix = createBitMatrix(data)
-                bitMatrix?.let { createBitmap(it) }
-            } catch (e: Exception) {
-
-                null
-            }
-        }
-
-        val qrImage: ImageView = findViewById(R.id.qr_code_image)
-
-        // アプリケーションの起動時にランダムな4桁の数字を生成
-        var randomNumber: Int = generateRandomFourDigitNumber()
-        println("Random 4-digit number: $randomNumber")
-
-        //Fragment:timerの使用
-        val fragment = timer()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
-
-
-        // QRコードを生成
-        var qrCode = createQrCode(randomNumber.toString())
-
-        qrImage.setImageBitmap(qrCode)
-
-        //タイマーでQR更新
-        var updateCount = 0
-        val maxUpdates = 5 // 最大更新回数の設定(5)
-
-        val timer = fixedRateTimer("timer", false, 0L, 5*60*1000L) { // 300000ミリ秒（5分）ごとに実行
-            if (updateCount < maxUpdates) {
-                randomNumber = generateRandomFourDigitNumber()
-                println("Random 4-digit number: $randomNumber")
-
-                qrCode = createQrCode(randomNumber.toString())
-                runOnUiThread {
-                    qrImage.setImageBitmap(qrCode)
+        FirebaseApp.initializeApp(this)
+        getCollectionData(
+            collectionName = "garbageBoxes", // コレクション名を指定
+            onSuccess = { documents -> // 成功時の処理
+                for (document in documents) {
+                    // 各ドキュメントのIDとデータをログに表示
+                    Log.d("Firestore", "${document.id} => ${document.data}")
                 }
-                updateCount++
-            } else {
-                this.cancel()  // タイマーをキャンセル
-
-                // 5分後にQRコード生成前の画像に戻す
-                Handler(Looper.getMainLooper()).postDelayed({
-                    runOnUiThread {
-                        qrImage.setImageBitmap(null) // QRコードをクリア
-                        qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
-                    }
-                }, 5*60*1000L) // 300000ミリ秒（5分）
+            },
+            onFailure = { exception -> // 失敗時の処理
+                Log.e("Firestore", "Error getting documents: ", exception)
             }
-        }
+        )
     }
 }
-
