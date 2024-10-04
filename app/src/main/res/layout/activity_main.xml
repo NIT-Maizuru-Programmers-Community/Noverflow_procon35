@@ -11,7 +11,7 @@
 
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/btnStart"
         android:layout_width="300dp"
         android:layout_height="150dp"
         android:layout_marginBottom="228dp"

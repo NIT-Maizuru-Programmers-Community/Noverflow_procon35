@@ -3,5 +3,9 @@
     <string name="test">kodera</string>
     <string name="asdf">kodera</string>
     <string name="back_button_description">戻るボタン</string>
+    <string name="title_activity_second">SecondActivity</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 
 </resources>
