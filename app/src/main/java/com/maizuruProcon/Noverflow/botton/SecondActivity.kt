@@ -1,53 +1,93 @@
 package com.maizuruProcon.Noverflow.botton
+
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.maizuruProcon.Noverflow.R
-import android.view.LayoutInflater
-import android.widget.ImageView
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import com.maizuruProcon.Noverflow.FourActivity
 import com.maizuruProcon.Noverflow.MainActivity
-import com.maizuruProcon.Noverflow.TimerService
-import com.maizuruProcon.Noverflow.timer
 import kotlin.random.Random
-import android.view.ViewGroup
-
+import com.maizuruProcon.Noverflow.KakuninActivity
 
 class SecondActivity : AppCompatActivity() {
 
-    private var count=0
-    private var count1=0
-    private var count2=0
-    private var count3=0
+    private var count=0//瓶
+    private var count1=0//缶
+    private var count2=0//燃えるゴミ
+    private var count3=0//ペットポトル
     @SuppressLint("MissingInflatedId")
 
     override fun onCreate(savedInstanceState:Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
-        //ボタンの取得
+        // ボタンの取得
         val btnStart1: Button = findViewById(R.id.btnStart1)
 
-        //ボタンを押したら次の画面へ
+        fun generateRandomFourDigitNumber(): Int {
+            return Random.nextInt(1000, 9999)
+        }
+
+        fun createBitMatrix(data: String): BitMatrix? {
+            val multiFormatWriter = MultiFormatWriter()
+            val hints = mapOf(
+                // マージン
+                EncodeHintType.MARGIN to 0,
+                // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
+                EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
+            )
+
+            return multiFormatWriter.encode(
+                data, // QRコード化したいデータ
+                BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
+                170, // 生成されるイメージの高さ(px)
+                200, // 生成されるイメージの横幅(px)
+                hints
+            )
+        }
+
+        fun createBitmap(bitMatrix: BitMatrix): Bitmap {
+            val barcodeEncoder = BarcodeEncoder()
+            return barcodeEncoder.createBitmap(bitMatrix)
+        }
+
+        fun createQrCode(data: String): Bitmap? {
+            return try {
+                val bitMatrix = createBitMatrix(data)
+                bitMatrix?.let { createBitmap(it) }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+        // ボタンを押したら次の画面へ
         btnStart1.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            //合計０で決定が押されたときの処理
+            if(count+count1+count2+count3==0){
+                // KakuninActivityに移動するIntentを作成
+                val intent = Intent(this, KakuninActivity::class.java)
+                startActivity(intent)
+            } else if (count+count1+count2+count3>0){
+                val randomNumber = generateRandomFourDigitNumber()
+                println("Random 4-digit number: $randomNumber")
+
+                // QRコードを生成
+                val qrCode = createQrCode(randomNumber.toString())
+
+                // QRコードをBitmapとしてIntentに渡す
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("QR_CODE", qrCode)
+                startActivity(intent)
+            }
         }
 
         val tv: TextView =findViewById(R.id.tv)
@@ -129,7 +169,8 @@ class SecondActivity : AppCompatActivity() {
         val btnBack :Button = findViewById(R.id.btnBack)
         //3)戻るボタン(アクティビティの終了)
         btnBack.setOnClickListener{
-            finish()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
        }
     }
 }

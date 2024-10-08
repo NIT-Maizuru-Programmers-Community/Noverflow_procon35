@@ -2,11 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:rotationX="0"
-    tools:context=".MainActivity" >
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textView1"
@@ -26,31 +24,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnTest"
+    <TextView
+        android:id="@+id/textViewQuotient"
+        android:translationZ="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="戻る"
+        android:layout_marginTop="124dp"
+        android:text="個数が入力されていません\n"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.108"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/backbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="入力を続ける"
         android:backgroundTint="@color/buttonColor"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <org.osmdroid.views.MapView
-        android:id="@+id/mapView"
-        android:layout_width="fill_parent"
-        android:layout_height="650dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.182"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="0.963" />
 
-    </org.osmdroid.views.MapView>
+    <Button
+        android:id="@+id/homebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/buttonColor"
+        android:text="HOMEに戻る"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.727"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.938" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-

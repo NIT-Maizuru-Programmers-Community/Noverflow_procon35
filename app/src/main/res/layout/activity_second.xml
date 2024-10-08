@@ -3,14 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFEB3B">
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="309dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:text="Noverflow"
+        android:textColor="#000000"
+        android:textSize="60sp"
+        android:shadowColor="#808080"
+        android:shadowDx="8.0"
+        android:shadowDy="8.0"
+        android:shadowRadius="1.5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/count4re"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.171"
@@ -22,7 +42,7 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="捨てるごみの種類を選んでね"
+        android:text="捨てるごみの種類を選択"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,19 +50,21 @@
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.106" />
+        app:layout_constraintVertical_bias="0.179" />
 
     <Button
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="戻る"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.873"
+        app:layout_constraintHorizontal_bias="0.182"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.954" />
+        app:layout_constraintVertical_bias="0.963" />
 
     <Button
         android:id="@+id/btnBin"
@@ -92,13 +114,14 @@
         android:id="@+id/btnStart1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/buttonColor"
         android:text="決定"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.226"
+        app:layout_constraintHorizontal_bias="0.863"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.954" />
+        app:layout_constraintVertical_bias="0.976" />
 
     <Button
         android:id="@+id/btnMoe"
@@ -130,6 +153,9 @@
         android:layout_marginTop="352dp"
         android:onClick="onButton1in"
         android:text="+"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.845"
         app:layout_constraintStart_toStartOf="parent"
@@ -141,6 +167,9 @@
         android:layout_height="wrap_content"
         android:onClick="onButton1re"
         android:text="-"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.179"
@@ -153,6 +182,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.843"
@@ -165,6 +197,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.156"
@@ -190,6 +225,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.181"
@@ -215,6 +253,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.871"
@@ -240,10 +281,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+"
+        android:textSize="30sp"
+        android:backgroundTint="@color/buttonColor"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.881"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.862" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

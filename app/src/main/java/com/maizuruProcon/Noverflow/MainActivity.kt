@@ -23,14 +23,13 @@ import android.content.Context
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import com.maizuruProcon.Noverflow.botton.SecondActivity
-import android.view.LayoutInflater
-import android.view.View
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var timerFinishedReceiver: BroadcastReceiver
-    private var randomNumber: Int? = null
-    private var qrCode: Bitmap? = null
+    private var updateCount = 0
+    private val maxUpdates = 5 // 最大更新回数の設定(5)
+    private lateinit var timerFragment: TimerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +45,8 @@ class MainActivity : AppCompatActivity() {
         val imageButton: ImageButton = findViewById(R.id.button)
         val button: Button = findViewById(R.id.test)
         val resetButton: Button = findViewById(R.id.resetButton)
-        val QRbutton: Button = findViewById(R.id.button2)
         val btnstart: Button = findViewById(R.id.btnStart)
+        val mapButton :Button =findViewById(R.id.mapButton)
 
         // ボタンが押された時の処理(画面遷移)
         btnstart.setOnClickListener {
@@ -58,6 +57,11 @@ class MainActivity : AppCompatActivity() {
         imageButton.setOnClickListener {
             // Intentを作成してaccountActivityに遷移
             val intent = Intent(this, account::class.java)
+            startActivity(intent)
+        }
+        mapButton.setOnClickListener{
+            // Intentを作成してfourActivityに遷移
+            val intent= Intent(this, FourActivity::class.java)
             startActivity(intent)
         }
 
@@ -139,96 +143,91 @@ class MainActivity : AppCompatActivity() {
         // アプリ起動時に画像を設定
         updateImage(Singleton.total, imageButton)
 
-        //QRの生成と更新、タイマーの表示
-        fun generateRandomFourDigitNumber(): Int {
-            return Random.nextInt(1000, 9999)
-        }
-
-        fun createBitMatrix(data: String): BitMatrix? {
-            val multiFormatWriter = MultiFormatWriter()
-            val hints = mapOf(
-                // マージン
-                EncodeHintType.MARGIN to 0,
-                // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
-                EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-            )
-
-            return multiFormatWriter.encode(
-                data, // QRコード化したいデータ
-                BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
-                170, // 生成されるイメージの高さ(px)
-                200, // 生成されるイメージの横幅(px)
-                hints
-            )
-        }
-
-        fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-            val barcodeEncoder = BarcodeEncoder()
-            return barcodeEncoder.createBitmap(bitMatrix)
-        }
-
-        fun createQrCode(data: String): Bitmap? {
-            return try {
-                val bitMatrix = createBitMatrix(data)
-                bitMatrix?.let { createBitmap(it) }
-            } catch (e: Exception) {
-
-                null
-            }
-        }
-
+        // ImageViewの取得
         val qrImage: ImageView = findViewById(R.id.qr_code_image)
 
-        QRbutton.setOnClickListener {
+        // IntentからQRコードを取得
+        val qrCode: Bitmap? = intent.getParcelableExtra("QR_CODE")
 
-            randomNumber = generateRandomFourDigitNumber()
-            println("Random 4-digit number: $randomNumber")
+        // タイマーのフラグメントを追加
+        timerFragment = TimerFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, timerFragment)
+            .commit()
 
-            // QRコードを生成
-            qrCode = createQrCode(randomNumber.toString())
-            qrImage.setImageBitmap(qrCode)
-
-            // Fragment: timerの使用
-            val fragment = timer()
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit()
-
-            // サービスのインテントを作成し、タイマーをバックグラウンドで実行
-            val intent2 = Intent(this, TimerService::class.java)
-            startService(intent2) // サービスを開始
-
-            // QRコードの更新終了時の処理
-            Handler(Looper.getMainLooper()).postDelayed({
-                runOnUiThread {
-                    qrImage.setImageBitmap(null) // QRコードをクリア
-                    qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
-                }
-            }, 30 * 60 * 1000L) // 300000ミリ秒（5分後に画像をクリア）
+        // QRコードをImageViewに設定
+        qrCode?.let {
+            qrImage.setImageBitmap(it)
+            timerFragment.startTimer() // QRコードが生成された後にタイマーを起動
         }
-
-        // タイマーでQR更新
-        var updateCount = 0
-        val maxUpdates = 5 // 最大更新回数の設定(5)
 
         // タイマー終了時にQRコード更新と処理を行うためのBroadcastReceiverを登録
         timerFinishedReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (updateCount < maxUpdates) {
-                    randomNumber = generateRandomFourDigitNumber()
+                    val randomNumber = generateRandomFourDigitNumber()
                     println("Random 4-digit number: $randomNumber")
 
-                    qrCode = createQrCode(randomNumber.toString())
+                    val qrCode = createQrCode(randomNumber.toString())
                     runOnUiThread {
                         qrImage.setImageBitmap(qrCode)
                     }
                     updateCount++
+                    timerFragment.startTimer() // タイマーを再起動
                 }
             }
         }
 
         // BroadcastReceiverを登録
         registerReceiver(timerFinishedReceiver, IntentFilter("TIMER_FINISHED"))
+
+        // サービスのインテントを作成し、タイマーをバックグラウンドで実行
+        val intentService = Intent(this, TimerService::class.java)
+        startService(intentService) // サービスを開始
+
+        // QRコードの更新終了時の処理
+        Handler(Looper.getMainLooper()).postDelayed({
+            runOnUiThread {
+                qrImage.setImageBitmap(null) // QRコードをクリア
+                qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+            }
+        }, 30 * 60 * 1000L) // 300000ミリ秒（5分後に画像をクリア）
+    }
+
+    fun generateRandomFourDigitNumber(): Int {
+        return Random.nextInt(1000, 9999)
+    }
+
+    fun createBitMatrix(data: String): BitMatrix? {
+        val multiFormatWriter = MultiFormatWriter()
+        val hints = mapOf(
+            // マージン
+            EncodeHintType.MARGIN to 0,
+            // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
+            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
+        )
+
+        return multiFormatWriter.encode(
+            data, // QRコード化したいデータ
+            BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
+            170, // 生成されるイメージの高さ(px)
+            200, // 生成されるイメージの横幅(px)
+            hints
+        )
+    }
+
+    fun createBitmap(bitMatrix: BitMatrix): Bitmap {
+        val barcodeEncoder = BarcodeEncoder()
+        return barcodeEncoder.createBitmap(bitMatrix)
+    }
+
+    fun createQrCode(data: String): Bitmap? {
+        return try {
+            val bitMatrix = createBitMatrix(data)
+            bitMatrix?.let { createBitmap(it) }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     // Activity/Fragmentが終了する際にBroadcastReceiverを解除

@@ -1,5 +1,6 @@
 package com.maizuruProcon.Noverflow
 
+import Singleton
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.content.Context
+import android.view.View
 
 class account: AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +54,16 @@ class account: AppCompatActivity()  {
         // textViewQuotientに今のレベルを表示
         val textView: TextView = findViewById(R.id.textViewQuotient)
         textView.text = "your level : ${Singleton.quotient}"
+
+        //背景の制御
+        // ImageViewの取得
+        val myImageView: ImageView = findViewById(R.id.back1)
+
+        if (Singleton.total%2 == 1) {
+            myImageView.visibility = View.VISIBLE // 表示
+        } else if(Singleton.total%2 == 0){
+            myImageView.visibility = View.GONE // 非表示
+        }
 
 
         //仮の値（分別の結果を受け取る）
@@ -100,16 +112,16 @@ class account: AppCompatActivity()  {
 
         //利用回数の表示
         val moeruTotalTextView: TextView = findViewById(R.id.moeru_total)
-        moeruTotalTextView.text = "${Singleton.moeru}回"
+        moeruTotalTextView.text = "${Singleton.moeru}個"
 
         val petTotalTextView: TextView = findViewById(R.id.pet_total)
-        petTotalTextView.text = "${Singleton.pet}回"
+        petTotalTextView.text = "${Singleton.pet}個"
 
         val plasticTotalTextView: TextView = findViewById(R.id.plastic_total)
-        plasticTotalTextView.text = "${Singleton.plastic}回"
+        plasticTotalTextView.text = "${Singleton.plastic}個"
 
         val kanTotalTextView: TextView = findViewById(R.id.kan_total)
-        kanTotalTextView.text = "${Singleton.kan}回"
+        kanTotalTextView.text = "${Singleton.kan}個"
 
         //リセットボタンの実装
         resetButton.setOnClickListener {

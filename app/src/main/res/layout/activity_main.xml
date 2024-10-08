@@ -59,13 +59,13 @@
         android:id="@+id/button"
         android:layout_width="230dp"
         android:layout_height="73dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="28dp"
         android:background="?attr/selectableItemBackground"
         android:contentDescription="イメージボタン"
         android:scaleType="fitCenter"
         android:src="@drawable/count1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.088"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnStart" />
 
@@ -73,10 +73,10 @@
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="680dp"
+        android:layout_marginTop="544dp"
         android:text="確認用"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -84,22 +84,24 @@
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="696dp"
+        android:layout_marginTop="496dp"
         android:text="Reset Total"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.398"
+        app:layout_constraintHorizontal_bias="0.945"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="612dp"
-        android:text="QR生成"
+        android:id="@+id/mapButton"
+        android:layout_width="134dp"
+        android:layout_height="83dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/buttonColor"
+        android:text="Map"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.965"
+        app:layout_constraintHorizontal_bias="0.942"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btnStart" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

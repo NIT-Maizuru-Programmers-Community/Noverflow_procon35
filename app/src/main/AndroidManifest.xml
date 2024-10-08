@@ -30,6 +30,10 @@
         </activity>
 
         <activity
+            android:name=".KakuninActivity">
+        </activity>
+
+        <activity
             android:name=".botton.SecondActivity"
             android:exported="false"
             android:label="@string/title_activity_second"
