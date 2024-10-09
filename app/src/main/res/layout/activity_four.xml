@@ -28,10 +28,11 @@
 
     <Button
         android:id="@+id/btnTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="戻る"
+        android:layout_width="98dp"
+        android:layout_height="76dp"
         android:backgroundTint="@color/buttonColor"
+        android:text="戻る"
+        android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

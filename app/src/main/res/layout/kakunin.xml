@@ -26,43 +26,45 @@
 
     <TextView
         android:id="@+id/textViewQuotient"
-        android:translationZ="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="124dp"
-        android:text="個数が入力されていません\n"
-        android:textSize="30sp"
+        android:layout_marginTop="212dp"
+        android:text="個数が入力されていません\n合計が０個の場合確定できません\n\n[HOMEに戻る] でHOME画面\n[入力を続ける] で個数入力\n\nに戻ります"
+        android:textSize="25sp"
+        android:translationZ="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.108"
+        app:layout_constraintHorizontal_bias="0.653"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/backbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="入力を続ける"
+        android:layout_width="219dp"
+        android:layout_height="110dp"
         android:backgroundTint="@color/buttonColor"
+        android:text="入力を続ける"
         android:textColor="@color/white"
+        android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.182"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+        app:layout_constraintVertical_bias="0.974" />
 
     <Button
         android:id="@+id/homebutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="219dp"
+        android:layout_height="110dp"
         android:backgroundTint="@color/buttonColor"
         android:text="HOMEに戻る"
+        android:textSize="25sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.727"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.938" />
+        app:layout_constraintVertical_bias="0.776" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
