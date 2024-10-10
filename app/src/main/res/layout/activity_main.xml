@@ -59,7 +59,7 @@
         android:id="@+id/button"
         android:layout_width="230dp"
         android:layout_height="73dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
         android:background="?attr/selectableItemBackground"
         android:contentDescription="イメージボタン"
         android:scaleType="fitCenter"
@@ -74,21 +74,10 @@
         android:id="@+id/test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="544dp"
+        android:layout_marginTop="560dp"
         android:text="確認用"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.003"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="496dp"
-        android:text="Reset Total"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.945"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
