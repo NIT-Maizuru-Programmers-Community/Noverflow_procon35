@@ -179,7 +179,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // BroadcastReceiverを登録
-        registerReceiver(timerFinishedReceiver, IntentFilter("TIMER_FINISHED"))
+        registerReceiver(timerFinishedReceiver, IntentFilter("TIMER_FINISHED"),
+            RECEIVER_NOT_EXPORTED
+        )
 
         // サービスのインテントを作成し、タイマーをバックグラウンドで実行
         val intentService = Intent(this, TimerService::class.java)
