@@ -34,7 +34,7 @@ class TimerFragment : Fragment() {
             }
 
             override fun onFinish() {
-                timerText.text = "利用不可"
+                timerText.text = "QRは利用できません"
             }
         }.start()
     }
