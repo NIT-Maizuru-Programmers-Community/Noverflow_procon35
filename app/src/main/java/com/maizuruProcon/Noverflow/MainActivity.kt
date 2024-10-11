@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         // ボタンを取得
         val imageButton: ImageButton = findViewById(R.id.button)
         val button: Button = findViewById(R.id.test)
-        //val resetButton: Button = findViewById(R.id.resetButton)
+        val resetButton: Button = findViewById(R.id.resetButton)
         val btnstart: Button = findViewById(R.id.btnStart)
         val mapButton :Button =findViewById(R.id.mapButton)
 
@@ -95,6 +95,32 @@ class MainActivity : AppCompatActivity() {
             Singleton.quotient = Singleton.total / 3
 
             // 余りの値に基づいて画像を変更
+            if (Singleton.remainder == 3 || Singleton.remainder == 0) {
+                imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
+            } else if (Singleton.remainder == 1) {
+                imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
+            } else if (Singleton.remainder == 2) {
+                imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
+            }
+        }
+
+        //リセットボタンの実装
+        resetButton.setOnClickListener {
+            Singleton.total = 0
+
+            // SharedPreferencesにデータを保存
+            with(sharedPref.edit()) {
+                putInt("total", Singleton.total)
+                apply()
+            }
+
+            // 3で割った余りを計算
+            Singleton.remainder = Singleton.total % 3
+
+            // 余りを求めたときの商を計算
+            Singleton.quotient = Singleton.total / 3
+
+            // 数字の値に基づいて画像を変更
             if (Singleton.remainder == 3 || Singleton.remainder == 0) {
                 imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
             } else if (Singleton.remainder == 1) {

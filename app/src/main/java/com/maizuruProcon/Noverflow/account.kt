@@ -51,9 +51,90 @@ class account: AppCompatActivity()  {
             imageView.setImageResource(R.drawable.count3)  // 余りが2の時の画像
         }
 
-        // textViewQuotientに今のレベルを表示
-        val textView: TextView = findViewById(R.id.textViewQuotient)
-        textView.text = "your level : ${Singleton.quotient}"
+        //仮の値（分別の結果を受け取る）
+        val garbage_kinds: Int = 1
+
+        //捨てたごみの種類別カウント
+        if (garbage_kinds == 1) {
+            Singleton.moeru += 1
+
+            with(sharedPref.edit()) {
+                putInt("moeru", Singleton.moeru)
+                apply()
+            }
+
+        } else if (garbage_kinds == 2) {
+            Singleton.pet += 1
+
+            with(sharedPref.edit()) {
+                putInt("pet", Singleton.pet)
+                apply()
+            }
+
+        } else if (garbage_kinds == 3) {
+            Singleton.plastic += 1
+
+            with(sharedPref.edit()) {
+                putInt("plastic", Singleton.plastic)
+                apply()
+            }
+
+        } else if (garbage_kinds == 4){
+            Singleton.kan += 1
+
+            with(sharedPref.edit()) {
+                putInt("kan", Singleton.kan)
+                apply()
+            }
+
+        }
+
+        // SharedPreferencesからデータを読み込む
+        Singleton.moeru = sharedPref.getInt("moeru", 0)
+        Singleton.pet = sharedPref.getInt("pet", 0)
+        Singleton.plastic = sharedPref.getInt("plastic", 0)
+        Singleton.kan = sharedPref.getInt("kan", 0)
+
+        //合計の計算
+        val all_total: Int =Singleton.moeru+Singleton.pet+Singleton.plastic+Singleton.kan
+
+        //利用回数の表示
+        val moeruTotalTextView: TextView = findViewById(R.id.moeru_total)
+        moeruTotalTextView.text = "${Singleton.moeru}個"
+
+        val petTotalTextView: TextView = findViewById(R.id.pet_total)
+        petTotalTextView.text = "${Singleton.pet}個"
+
+        val plasticTotalTextView: TextView = findViewById(R.id.plastic_total)
+        plasticTotalTextView.text = "${Singleton.plastic}個"
+
+        val kanTotalTextView: TextView = findViewById(R.id.kan_total)
+        kanTotalTextView.text = "${Singleton.kan}個"
+
+        // 今のレベルの表示
+        val level_text: TextView = findViewById(R.id.textViewQuotient)
+        level_text.text = "your level : ${Singleton.quotient}"
+
+        //合計の表示
+        val total_text: TextView = findViewById(R.id.all_total)
+        total_text.text = "合計${all_total}個"
+
+        //リセットボタンの実装
+        resetButton.setOnClickListener {
+            Singleton.moeru = 0
+            Singleton.pet = 0
+            Singleton.plastic = 0
+            Singleton.kan = 0
+
+            // SharedPreferencesにデータを保存
+            with(sharedPref.edit()) {
+                putInt("moeru", Singleton.moeru)
+                putInt("pet", Singleton.pet)
+                putInt("plastic", Singleton.plastic)
+                putInt("kan", Singleton.kan)
+                apply()
+            }
+        }
 
         //背景の制御
         // ImageViewの取得
@@ -331,80 +412,5 @@ class account: AppCompatActivity()  {
             back14.visibility = View.VISIBLE // 表示
             back15.visibility = View.VISIBLE // 表示
         }
-
-        //仮の値（分別の結果を受け取る）
-        val garbage_kinds: Int = 1
-
-        //捨てたごみの種類別カウント
-        if (garbage_kinds == 1) {
-            Singleton.moeru += 1
-
-            with(sharedPref.edit()) {
-                putInt("moeru", Singleton.moeru)
-                apply()
-            }
-
-        } else if (garbage_kinds == 2) {
-            Singleton.pet += 1
-
-            with(sharedPref.edit()) {
-                putInt("pet", Singleton.pet)
-                apply()
-            }
-
-        } else if (garbage_kinds == 3) {
-            Singleton.plastic += 1
-
-            with(sharedPref.edit()) {
-                putInt("plastic", Singleton.plastic)
-                apply()
-            }
-
-        } else {
-            Singleton.kan += 1
-
-            with(sharedPref.edit()) {
-                putInt("kan", Singleton.kan)
-                apply()
-            }
-
-        }
-
-        // SharedPreferencesからデータを読み込む
-        Singleton.moeru = sharedPref.getInt("moeru", 0)
-        Singleton.pet = sharedPref.getInt("pet", 0)
-        Singleton.plastic = sharedPref.getInt("plastic", 0)
-        Singleton.kan = sharedPref.getInt("kan", 0)
-
-        //利用回数の表示
-        val moeruTotalTextView: TextView = findViewById(R.id.moeru_total)
-        moeruTotalTextView.text = "${Singleton.moeru}個"
-
-        val petTotalTextView: TextView = findViewById(R.id.pet_total)
-        petTotalTextView.text = "${Singleton.pet}個"
-
-        val plasticTotalTextView: TextView = findViewById(R.id.plastic_total)
-        plasticTotalTextView.text = "${Singleton.plastic}個"
-
-        val kanTotalTextView: TextView = findViewById(R.id.kan_total)
-        kanTotalTextView.text = "${Singleton.kan}個"
-
-        //リセットボタンの実装
-        resetButton.setOnClickListener {
-            Singleton.moeru = 0
-            Singleton.pet = 0
-            Singleton.plastic = 0
-            Singleton.kan = 0
-
-            // SharedPreferencesにデータを保存
-            with(sharedPref.edit()) {
-                putInt("moeru", Singleton.moeru)
-                putInt("pet", Singleton.pet)
-                putInt("plastic", Singleton.plastic)
-                putInt("kan", Singleton.kan)
-                apply()
-            }
-        }
-
     }
 }
