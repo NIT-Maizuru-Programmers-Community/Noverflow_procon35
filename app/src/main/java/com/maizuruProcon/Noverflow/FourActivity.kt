@@ -62,9 +62,9 @@ class FourActivity : AppCompatActivity(){
         val mapSetupController = MapSetupController(this, mapView)
         mapSetupController.setupMapWithLocation { currentLocation ->
             val destinations = listOf(
-                GeoPoint(35.47527518222683, 135.38520542552095),
-                GeoPoint(35.510810748412915, 135.39708889611526),
-                GeoPoint(35.499671772892476, 135.43918890682946)
+                GeoPoint(37.41690641728752, -122.08539203847516),
+                GeoPoint(37.41765285373379, -122.07798577331849),
+                GeoPoint(37.41400358236627, -122.09261867553687)
             )
             val infos = listOf(380,555,555)
 
