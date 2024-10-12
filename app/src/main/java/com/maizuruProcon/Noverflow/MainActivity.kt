@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets///apple apple
         }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -54,33 +55,29 @@ class MainActivity : AppCompatActivity() {
             isEnabled = true // ボタンを有効にする
         }
 
+        // SharedPreferencesからボタンの状態を読み取る
+        val sharedPref2 = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
+        val isBtnStartDisabled = sharedPref2.getBoolean("btnStartDisabled", false)
+        val btnStartText = sharedPref2.getString("btnStartText", "捨てる")
+
+        // ボタンの状態を設定
+        binding.btnStart.apply {
+            text = btnStartText // SharedPreferencesから読み取ったテキストを設定
+            if (isBtnStartDisabled) {
+                setBackgroundColor(Color.GRAY) // 背景を灰色にする
+                isEnabled = false // ボタンを無効にする
+            } else {
+                setBackgroundResource(R.drawable.design) // 元の背景に戻す
+                isEnabled = true // ボタンを有効にする
+            }
+        }
+
         // ボタンを取得
         val imageButton: ImageButton = findViewById(R.id.button)
         val button: Button = findViewById(R.id.test)
         val resetButton: Button = findViewById(R.id.resetButton)
         val btnstart: Button = findViewById(R.id.btnStart)
         val mapButton :Button =findViewById(R.id.mapButton)
-
-        // SharedPreferencesからボタンの状態を読み取る
-        val sharedPref2 = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
-        val isBtnStartDisabled = sharedPref2.getBoolean("btnStartDisabled", false)
-
-        // ボタンの状態を設定
-        if (isBtnStartDisabled) {
-            binding.btnStart.apply {
-                setBackgroundColor(Color.GRAY)
-                text = "利用不可"
-                isEnabled = false
-                textSize = 20f
-            }
-        } else {
-            binding.btnStart.apply {
-                setBackgroundResource(R.drawable.design) // 背景を設定
-                text = "捨てる" // テキストを設定
-                textSize = 80f // テキストサイズを設定
-                isEnabled = true // ボタンを有効にする
-            }
-        }
 
         // ボタンが押された時の処理(画面遷移)
         btnstart.setOnClickListener {
@@ -221,27 +218,28 @@ class MainActivity : AppCompatActivity() {
         val intentService = Intent(this, TimerService::class.java)
         startService(intentService) // サービスを開始
 
-        // QRコードの更新終了時の処理
+        // タイマーが終了したらボタンの状態を元に戻す
         Handler(Looper.getMainLooper()).postDelayed({
             runOnUiThread {
                 qrImage.setImageBitmap(null) // QRコードをクリア
                 qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
 
                 // SharedPreferencesの状態をリセット
-                with(sharedPref.edit()) {
+                with(sharedPref2.edit()) {
                     putBoolean("btnStartDisabled", false)
+                    putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
                     apply()
                 }
 
                 // ボタンの状態を元に戻す
                 binding.btnStart.apply {
-                    setBackgroundResource(R.drawable.design) // 元の色に戻す
-                    textSize = 80f // 元のテキストサイズに戻す
-                    text = "捨てる"
-                    isEnabled = true
+                    setBackgroundResource(R.drawable.design) // 元の背景に戻す
+                    textSize = 80f // テキストサイズを設定
+                    text = "捨てる" // テキストを「捨てる」に戻す
+                    isEnabled = true // ボタンを有効にする
                 }
             }
-        }, 1 * 60 * 1000L) // 300000ミリ秒（5分後に画像をクリア）
+        }, 1 * 60 * 1000L) // 5分後に画像とボタンの状態をリセット
     }
 
     fun generateRandomFourDigitNumber(): Int {

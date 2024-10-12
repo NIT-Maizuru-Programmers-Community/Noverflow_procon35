@@ -19,6 +19,8 @@ import kotlin.random.Random
 import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
+import android.graphics.Color
+
 
 class SecondActivity : AppCompatActivity() {
 
@@ -80,7 +82,15 @@ class SecondActivity : AppCompatActivity() {
             val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
                 putBoolean("btnStartDisabled", true)
+                putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
                 apply()
+            }
+
+            // ボタンの見た目を更新
+            btnStart1.apply {
+                setBackgroundColor(Color.GRAY) // ボタンの背景を灰色にする
+                text = "利用不可" // ボタンのテキストを「利用不可」に設定
+                isEnabled = false // ボタンを無効にする
             }
 
             //合計０で決定が押されたときの処理
