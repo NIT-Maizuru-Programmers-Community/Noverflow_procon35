@@ -12,7 +12,7 @@ import android.view.MotionEvent
 class TimerFragment : Fragment() {
     private lateinit var timerText: TextView
     private var countDownTimer: CountDownTimer? = null
-    private val startTimeInMillis: Long = 30 * 60 * 1000 // 分をミリ秒で設定
+    private val startTimeInMillis: Long = 1 * 60 * 1000 // 分をミリ秒で設定
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

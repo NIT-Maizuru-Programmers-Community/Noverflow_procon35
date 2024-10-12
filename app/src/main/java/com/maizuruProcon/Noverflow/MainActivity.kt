@@ -23,6 +23,8 @@ import android.content.Context
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
 import com.maizuruProcon.Noverflow.botton.SecondActivity
+import android.graphics.Color
+import com.maizuruProcon.Noverflow.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private var updateCount = 0
     private val maxUpdates = 5 // 最大更新回数の設定(5)
     private lateinit var timerFragment: TimerFragment
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +43,16 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets///apple apple
         }
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // アプリ起動時にボタンの初期状態を設定
+        binding.btnStart.apply {
+            setBackgroundResource(R.drawable.design) // 背景を設定
+            text = "捨てる" // テキストを設定
+            textSize = 80f // テキストサイズを設定
+            isEnabled = true // ボタンを有効にする
+        }
 
         // ボタンを取得
         val imageButton: ImageButton = findViewById(R.id.button)
@@ -47,6 +60,27 @@ class MainActivity : AppCompatActivity() {
         val resetButton: Button = findViewById(R.id.resetButton)
         val btnstart: Button = findViewById(R.id.btnStart)
         val mapButton :Button =findViewById(R.id.mapButton)
+
+        // SharedPreferencesからボタンの状態を読み取る
+        val sharedPref2 = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
+        val isBtnStartDisabled = sharedPref2.getBoolean("btnStartDisabled", false)
+
+        // ボタンの状態を設定
+        if (isBtnStartDisabled) {
+            binding.btnStart.apply {
+                setBackgroundColor(Color.GRAY)
+                text = "利用不可"
+                isEnabled = false
+                textSize = 20f
+            }
+        } else {
+            binding.btnStart.apply {
+                setBackgroundResource(R.drawable.design) // 背景を設定
+                text = "捨てる" // テキストを設定
+                textSize = 80f // テキストサイズを設定
+                isEnabled = true // ボタンを有効にする
+            }
+        }
 
         // ボタンが押された時の処理(画面遷移)
         btnstart.setOnClickListener {
@@ -192,8 +226,22 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 qrImage.setImageBitmap(null) // QRコードをクリア
                 qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+
+                // SharedPreferencesの状態をリセット
+                with(sharedPref.edit()) {
+                    putBoolean("btnStartDisabled", false)
+                    apply()
+                }
+
+                // ボタンの状態を元に戻す
+                binding.btnStart.apply {
+                    setBackgroundResource(R.drawable.design) // 元の色に戻す
+                    textSize = 80f // 元のテキストサイズに戻す
+                    text = "捨てる"
+                    isEnabled = true
+                }
             }
-        }, 30 * 60 * 1000L) // 300000ミリ秒（5分後に画像をクリア）
+        }, 1 * 60 * 1000L) // 300000ミリ秒（5分後に画像をクリア）
     }
 
     fun generateRandomFourDigitNumber(): Int {

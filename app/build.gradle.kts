@@ -7,6 +7,10 @@ android {
     namespace = "com.maizuruProcon.Noverflow"
     compileSdk = 34
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.maizuruProcon.Noverflow"
         minSdk = 26
