@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import android.view.MotionEvent
 
-class timer : Fragment() {
+class TimerFragment : Fragment() {
     private lateinit var timerText: TextView
     private var countDownTimer: CountDownTimer? = null
-    private val startTimeInMillis: Long = 30 * 60 * 1000 // 30 minutes in milliseconds
+    private val startTimeInMillis: Long = 1 * 60 * 1000 // 分をミリ秒で設定
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -20,15 +20,11 @@ class timer : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.timer, container, false)
         timerText = view.findViewById(R.id.timer_text)
-
-        // ドラッグ可能にするためのリスナーを設定
-        timerText.setOnTouchListener(DragTouchListener())
-
-        startTimer()
+        timerText.text = "QRは利用できません" // 初期状態
         return view
     }
 
-    private fun startTimer() {
+    fun startTimer() {
         countDownTimer?.cancel()
         countDownTimer = object : CountDownTimer(startTimeInMillis, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -38,7 +34,7 @@ class timer : Fragment() {
             }
 
             override fun onFinish() {
-                timerText.text = "利用不可"
+                timerText.text = "QRは利用できません"
             }
         }.start()
     }
