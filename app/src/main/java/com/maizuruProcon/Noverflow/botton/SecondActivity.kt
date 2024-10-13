@@ -17,6 +17,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.maizuruProcon.Noverflow.MainActivity
 import kotlin.random.Random
 import com.maizuruProcon.Noverflow.KakuninActivity
+import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
+import android.content.Context
+import android.graphics.Color
+
 
 class SecondActivity : AppCompatActivity() {
 
@@ -24,11 +28,14 @@ class SecondActivity : AppCompatActivity() {
     private var count1=0//缶
     private var count2=0//燃えるゴミ
     private var count3=0//ペットポトル
+    private lateinit var binding: ActivitySecondBinding
     @SuppressLint("MissingInflatedId")
 
     override fun onCreate(savedInstanceState:Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
+        binding = ActivitySecondBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // ボタンの取得
         val btnStart1: Button = findViewById(R.id.btnStart1)
@@ -71,6 +78,21 @@ class SecondActivity : AppCompatActivity() {
 
         // ボタンを押したら次の画面へ
         btnStart1.setOnClickListener {
+            // ボタンの状態をSharedPreferencesに保存
+            val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                putBoolean("btnStartDisabled", true)
+                putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
+                apply()
+            }
+
+            // ボタンの見た目を更新
+            btnStart1.apply {
+                setBackgroundColor(Color.GRAY) // ボタンの背景を灰色にする
+                text = "利用不可" // ボタンのテキストを「利用不可」に設定
+                isEnabled = false // ボタンを無効にする
+            }
+
             //合計０で決定が押されたときの処理
             if(count+count1+count2+count3==0){
                 // KakuninActivityに移動するIntentを作成
