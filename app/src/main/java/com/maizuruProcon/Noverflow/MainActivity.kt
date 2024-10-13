@@ -193,6 +193,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // タイマー終了時にQRコード更新と処理を行うためのBroadcastReceiverを登録
+        //ここをAPI３４に対応させる
         timerFinishedReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (updateCount < maxUpdates) {
