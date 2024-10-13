@@ -206,7 +206,21 @@ class MainActivity : AppCompatActivity() {
                     val randomNumber = generateRandomFourDigitNumber()
                     println("Random 4-digit number: $randomNumber")
 
-                    val qrCode = createQrCode(randomNumber.toString())
+                    updateFieldDataWithOption(
+                        collectionName = "noverflow-apps",
+                        documentId = "pixel4a",
+                        fieldName = "token",
+                        value = randomNumber,
+                        updateMode = UpdateMode.SET,
+                        onSuccess = {
+                            Log.d("Firestore", "Field updated successfully")
+                        },
+                        onFailure = { exception ->
+                            Log.e("Firestore", "Error updating field", exception)
+                        }
+                    )
+
+                    val qrCode = createQrCode(randomNumber)
                     runOnUiThread {
                         qrImage.setImageBitmap(qrCode)
                     }
@@ -249,8 +263,8 @@ class MainActivity : AppCompatActivity() {
         }, 1 * 60 * 1000L) // 5分後に画像とボタンの状態をリセット
     }
 
-    fun generateRandomFourDigitNumber(): Int {
-        return Random.nextInt(1000, 9999)
+    fun generateRandomFourDigitNumber(): String {
+        return String.format("%04d", Random.nextInt(0, 10000))
     }
 
     fun createBitMatrix(data: String): BitMatrix? {
