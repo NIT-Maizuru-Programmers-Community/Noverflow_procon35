@@ -193,14 +193,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         // タイマー終了時にQRコード更新と処理を行うためのBroadcastReceiverを登録
-        //ここをAPI３４に対応させる
         timerFinishedReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (updateCount < maxUpdates) {
-                    val randomNumber = generateRandomFourDigitNumber()
+                    val randomNumber = QRCodeUtils.generateRandomFourDigitNumber()
                     println("Random 4-digit number: $randomNumber")
 
-                    val qrCode = createQrCode(randomNumber.toString())
+                    val qrCode = QRCodeUtils.createQrCode(randomNumber.toString())
                     runOnUiThread {
                         qrImage.setImageBitmap(qrCode)
                     }
@@ -240,7 +239,7 @@ class MainActivity : AppCompatActivity() {
                     isEnabled = true // ボタンを有効にする
                 }
             }
-        }, 1 * 60 * 1000L) // 5分後に画像とボタンの状態をリセット
+        }, 30 * 60 * 1000L) // 5分後に画像とボタンの状態をリセット
     }
 
     fun generateRandomFourDigitNumber(): Int {

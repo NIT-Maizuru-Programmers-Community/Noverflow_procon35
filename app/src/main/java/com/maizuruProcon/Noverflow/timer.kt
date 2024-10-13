@@ -12,7 +12,7 @@ import android.view.MotionEvent
 class TimerFragment : Fragment() {
     private lateinit var timerText: TextView
     private var countDownTimer: CountDownTimer? = null
-    private val startTimeInMillis: Long = 1 * 60 * 1000 // 分をミリ秒で設定
+    private val startTimeInMillis: Long = 30 * 60 * 1000 // 30分をミリ秒で設定
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,28 +37,5 @@ class TimerFragment : Fragment() {
                 timerText.text = "QRは利用できません"
             }
         }.start()
-    }
-
-    private inner class DragTouchListener : View.OnTouchListener {
-        private var dX = 0f
-        private var dY = 0f
-
-        override fun onTouch(view: View, event: MotionEvent): Boolean {
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    dX = view.x - event.rawX
-                    dY = view.y - event.rawY
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    view.animate()
-                        .x(event.rawX + dX)
-                        .y(event.rawY + dY)
-                        .setDuration(0)
-                        .start()
-                }
-                else -> return false
-            }
-            return true
-        }
     }
 }
