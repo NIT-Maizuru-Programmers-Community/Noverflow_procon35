@@ -8,25 +8,13 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import com.maizuruProcon.Noverflow.R
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.common.BitMatrix
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.maizuruProcon.Noverflow.MainActivity
-import kotlin.random.Random
 import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.graphics.Color
-import android.graphics.BitmapFactory
-import android.widget.ImageView
 import com.maizuruProcon.Noverflow.QRCodeUtils
-
-
 import java.io.ByteArrayOutputStream
-
 
 class SecondActivity : AppCompatActivity() {
 
@@ -48,6 +36,7 @@ class SecondActivity : AppCompatActivity() {
 
         // ボタンを押したら次の画面へ
         btnStart1.setOnClickListener {
+
             // ボタンの状態をSharedPreferencesに保存
             val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
@@ -69,6 +58,7 @@ class SecondActivity : AppCompatActivity() {
                 val intent = Intent(this, KakuninActivity::class.java)
                 startActivity(intent)
             } else if (count + count1 + count2 + count3 > 0) {
+
                 // ランダムな4桁の数字を生成
                 val randomNumber = QRCodeUtils.generateRandomFourDigitNumber()
                 println("ランダムな4桁の数字: $randomNumber")
@@ -84,10 +74,10 @@ class SecondActivity : AppCompatActivity() {
                     val byteArray = stream.toByteArray()
                     intent.putExtra("QR_CODE", byteArray)
                 }
+
                 startActivity(intent)
             }
         }
-
 
         val tv: TextView =findViewById(R.id.tv)
         val count1in: Button=findViewById(R.id.count1in)
