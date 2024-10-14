@@ -243,42 +243,6 @@ class MainActivity : AppCompatActivity() {
         }, 30 * 60 * 1000L) // 5分後に画像とボタンの状態をリセット
     }
 
-    fun generateRandomFourDigitNumber(): Int {
-        return Random.nextInt(1000, 9999)
-    }
-
-    fun createBitMatrix(data: String): BitMatrix? {
-        val multiFormatWriter = MultiFormatWriter()
-        val hints = mapOf(
-            // マージン
-            EncodeHintType.MARGIN to 0,
-            // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
-            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-        )
-
-        return multiFormatWriter.encode(
-            data, // QRコード化したいデータ
-            BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
-            170, // 生成されるイメージの高さ(px)
-            200, // 生成されるイメージの横幅(px)
-            hints
-        )
-    }
-
-    fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-        val barcodeEncoder = BarcodeEncoder()
-        return barcodeEncoder.createBitmap(bitMatrix)
-    }
-
-    fun createQrCode(data: String): Bitmap? {
-        return try {
-            val bitMatrix = createBitMatrix(data)
-            bitMatrix?.let { createBitmap(it) }
-        } catch (e: Exception) {
-            null
-        }
-    }
-
     // Activity/Fragmentが終了する際にBroadcastReceiverを解除
     override fun onDestroy() {
         unregisterReceiver(timerFinishedReceiver)
