@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var qrImage: ImageView
     private lateinit var btnstart: Button
     private val handler = Handler(Looper.getMainLooper())
-    private val updateInterval: Long =   1000 // 5分
+    private val updateInterval: Long = 5*  1000 // 5分
     private lateinit var timerFragment: TimerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -192,6 +192,12 @@ class MainActivity : AppCompatActivity() {
             timerFragment.startTimer()
         }
     }
+    // タイマーを停止するメソッドを追加
+    private fun stopQrUpdateTimer() {
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    // タイマーを開始するメソッド
     private fun startQrUpdateTimer() {
         handler.post(object : Runnable {
             override fun run() {
@@ -201,6 +207,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    // QRコードを更新するメソッド
     private fun updateQrCode() {
         val randomData = QRCodeUtils.generateRandomFourDigitNumber().toString()
         val qrBitmap = QRCodeUtils.createQrCode(randomData)
