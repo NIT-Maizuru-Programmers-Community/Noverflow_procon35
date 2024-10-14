@@ -12,7 +12,6 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.ImageButton
 import android.content.Context
-import android.content.BroadcastReceiver
 import com.maizuruProcon.Noverflow.botton.SecondActivity
 import android.graphics.Color
 import com.maizuruProcon.Noverflow.databinding.ActivityMainBinding
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnstart: Button
     private val handler = Handler(Looper.getMainLooper())
     private val updateInterval: Long = 5 * 60 * 1000 // 5分
+    private lateinit var timerFragment: TimerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -177,8 +177,19 @@ class MainActivity : AppCompatActivity() {
             qrImage.setImageBitmap(bitmap) // ImageViewにQRコードを表示
         }
 
+        // Fragmentを追加
+        if (savedInstanceState == null) {
+            timerFragment = TimerFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, timerFragment)
+                .commit()
+        } else {
+            timerFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as TimerFragment
+        }
+
         if (btnStartText == "利用不可") {
             startQrUpdateTimer()
+            timerFragment.startTimer()
         }
     }
     private fun startQrUpdateTimer() {
