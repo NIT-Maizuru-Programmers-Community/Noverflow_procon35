@@ -189,6 +189,28 @@ class MainActivity : AppCompatActivity() {
 
         if (btnStartText == "利用不可") {
             startQrUpdateTimer()
+            timerFragment.setTimerCallback(object : TimerCallback {
+                override fun onTimerFinished() {
+                    stopQrUpdateTimer()
+                    qrImage.setImageBitmap(null)
+                    qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+
+                    // SharedPreferencesの状態をリセット
+                    with(sharedPref2.edit()) {
+                        putBoolean("btnStartDisabled", false)
+                        putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
+                        apply()
+                    }
+
+                    // ボタンの状態を元に戻す
+                    binding.btnStart.apply {
+                        setBackgroundResource(R.drawable.design) // 元の背景に戻す
+                        textSize = 80f // テキストサイズを設定
+                        text = "捨てる" // テキストを「捨てる」に戻す
+                        isEnabled = true // ボタンを有効にする
+                    }
+                }
+            })
             timerFragment.startTimer()
         }
     }
