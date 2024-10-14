@@ -20,10 +20,6 @@ import android.graphics.BitmapFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var timerFinishedReceiver: BroadcastReceiver
-    private var updateCount = 0
-    private val maxUpdates = 5 // 最大更新回数の設定(5)
-    private lateinit var timerFragment: TimerFragment
     private lateinit var binding: ActivityMainBinding
     private lateinit var qrImage: ImageView
     private lateinit var btnstart: Button
