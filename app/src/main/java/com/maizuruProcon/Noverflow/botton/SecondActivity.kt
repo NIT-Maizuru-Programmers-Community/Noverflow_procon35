@@ -26,6 +26,44 @@ class SecondActivity : AppCompatActivity() {
     private var count3=0//ペットポトル
     @SuppressLint("MissingInflatedId")
 
+
+
+    fun generateRandomFourDigitNumber(): Int {
+        return Random.nextInt(1000, 9999)
+    }
+
+    fun createBitMatrix(data: String): BitMatrix? {
+        val multiFormatWriter = MultiFormatWriter()
+        val hints = mapOf(
+            // マージン
+            EncodeHintType.MARGIN to 0,
+            // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
+            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
+        )
+
+        return multiFormatWriter.encode(
+            data, // QRコード化したいデータ
+            BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
+            170, // 生成されるイメージの高さ(px)
+            200, // 生成されるイメージの横幅(px)
+            hints
+        )
+    }
+
+    fun createBitmap(bitMatrix: BitMatrix): Bitmap {
+        val barcodeEncoder = BarcodeEncoder()
+        return barcodeEncoder.createBitmap(bitMatrix)
+    }
+
+    fun createQrCode(data: String): Bitmap? {
+        return try {
+            val bitMatrix = createBitMatrix(data)
+            bitMatrix?.let { createBitmap(it) }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     override fun onCreate(savedInstanceState:Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
@@ -33,41 +71,7 @@ class SecondActivity : AppCompatActivity() {
         // ボタンの取得
         val btnStart1: Button = findViewById(R.id.btnStart1)
 
-        fun generateRandomFourDigitNumber(): Int {
-            return Random.nextInt(1000, 9999)
-        }
 
-        fun createBitMatrix(data: String): BitMatrix? {
-            val multiFormatWriter = MultiFormatWriter()
-            val hints = mapOf(
-                // マージン
-                EncodeHintType.MARGIN to 0,
-                // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
-                EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-            )
-
-            return multiFormatWriter.encode(
-                data, // QRコード化したいデータ
-                BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
-                170, // 生成されるイメージの高さ(px)
-                200, // 生成されるイメージの横幅(px)
-                hints
-            )
-        }
-
-        fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-            val barcodeEncoder = BarcodeEncoder()
-            return barcodeEncoder.createBitmap(bitMatrix)
-        }
-
-        fun createQrCode(data: String): Bitmap? {
-            return try {
-                val bitMatrix = createBitMatrix(data)
-                bitMatrix?.let { createBitmap(it) }
-            } catch (e: Exception) {
-                null
-            }
-        }
 
         // ボタンを押したら次の画面へ
         btnStart1.setOnClickListener {
@@ -169,8 +173,7 @@ class SecondActivity : AppCompatActivity() {
         val btnBack :Button = findViewById(R.id.btnBack)
         //3)戻るボタン(アクティビティの終了)
         btnBack.setOnClickListener{
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
        }
     }
 }

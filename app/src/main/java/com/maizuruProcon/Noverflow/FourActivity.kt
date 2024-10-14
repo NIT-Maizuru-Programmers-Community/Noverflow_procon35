@@ -52,8 +52,7 @@ class FourActivity : AppCompatActivity(){
         val btnTest :Button = findViewById(R.id.btnTest)
         //3)戻るボタン(アクティビティの終了)
         btnTest.setOnClickListener {
-            val intent=Intent(this,MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
 
     }
