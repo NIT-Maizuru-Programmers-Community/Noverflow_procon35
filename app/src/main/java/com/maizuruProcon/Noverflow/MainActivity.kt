@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var qrImage: ImageView
     private lateinit var btnstart: Button
     private val handler = Handler(Looper.getMainLooper())
-    private val updateInterval: Long = 5 * 60 * 1000 // 5分
+    private val updateInterval: Long =   1000 // 5分
     private lateinit var timerFragment: TimerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
