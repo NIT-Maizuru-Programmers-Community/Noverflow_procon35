@@ -9,7 +9,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 
 object QRCodeUtils {
     fun generateRandomFourDigitNumber(): Int {
-        return (1000..9999).random()
+        return (10000..99999).random()
     }
 
     fun createBitMatrix(data: String): BitMatrix? {

@@ -25,6 +25,7 @@ import android.content.IntentFilter
 import com.maizuruProcon.Noverflow.botton.SecondActivity
 import android.graphics.Color
 import com.maizuruProcon.Noverflow.databinding.ActivityMainBinding
+import android.graphics.BitmapFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -177,20 +178,20 @@ class MainActivity : AppCompatActivity() {
         // ImageViewの取得
         val qrImage: ImageView = findViewById(R.id.qr_code_image)
 
-        // IntentからQRコードを取得
-        val qrCode: Bitmap? = intent.getParcelableExtra("QR_CODE")
+        // IntentからQRコードのバイト配列を取得
+        val byteArray = intent.getByteArrayExtra("QR_CODE")
+
+        // バイト配列が存在する場合、BitmapにデコードしてImageViewに設定
+        byteArray?.let {
+            val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+            qrImage.setImageBitmap(bitmap) // ImageViewにQRコードを表示
+        }
 
         // タイマーのフラグメントを追加
         timerFragment = TimerFragment()
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, timerFragment)
             .commit()
-
-        // QRコードをImageViewに設定
-        qrCode?.let {
-            qrImage.setImageBitmap(it)
-            timerFragment.startTimer() // QRコードが生成された後にタイマーを起動
-        }
 
         // タイマー終了時にQRコード更新と処理を行うためのBroadcastReceiverを登録
         timerFinishedReceiver = object : BroadcastReceiver() {

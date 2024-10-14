@@ -20,6 +20,12 @@ import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.graphics.Color
+import android.graphics.BitmapFactory
+import android.widget.ImageView
+import com.maizuruProcon.Noverflow.QRCodeUtils
+
+
+import java.io.ByteArrayOutputStream
 
 
 class SecondActivity : AppCompatActivity() {
@@ -93,24 +99,31 @@ class SecondActivity : AppCompatActivity() {
                 isEnabled = false // ボタンを無効にする
             }
 
-            //合計０で決定が押されたときの処理
-            if(count+count1+count2+count3==0){
+            // 合計が0の場合の処理
+            if (count + count1 + count2 + count3 == 0) {
                 // KakuninActivityに移動するIntentを作成
                 val intent = Intent(this, KakuninActivity::class.java)
                 startActivity(intent)
-            } else if (count+count1+count2+count3>0){
-                val randomNumber = generateRandomFourDigitNumber()
-                println("Random 4-digit number: $randomNumber")
+            } else if (count + count1 + count2 + count3 > 0) {
+                // ランダムな4桁の数字を生成
+                val randomNumber = QRCodeUtils.generateRandomFourDigitNumber()
+                println("ランダムな4桁の数字: $randomNumber")
 
-                // QRコードを生成
-                val qrCode = createQrCode(randomNumber.toString())
+                // ランダムな数字からQRコードを生成
+                val qrCode = QRCodeUtils.createQrCode(randomNumber.toString())
 
-                // QRコードをBitmapとしてIntentに渡す
+                // QRコードのBitmapをIntentに渡す
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("QR_CODE", qrCode)
+                qrCode?.let {
+                    val stream = ByteArrayOutputStream()
+                    it.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    val byteArray = stream.toByteArray()
+                    intent.putExtra("QR_CODE", byteArray)
+                }
                 startActivity(intent)
             }
         }
+
 
         val tv: TextView =findViewById(R.id.tv)
         val count1in: Button=findViewById(R.id.count1in)
