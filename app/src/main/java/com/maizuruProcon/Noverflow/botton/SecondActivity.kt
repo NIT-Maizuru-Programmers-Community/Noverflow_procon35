@@ -8,19 +8,13 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import com.maizuruProcon.Noverflow.R
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.common.BitMatrix
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.maizuruProcon.Noverflow.MainActivity
-import kotlin.random.Random
 import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.graphics.Color
-
+import com.maizuruProcon.Noverflow.QRCodeUtils
+import java.io.ByteArrayOutputStream
 
 class SecondActivity : AppCompatActivity() {
 
@@ -40,44 +34,9 @@ class SecondActivity : AppCompatActivity() {
         // ボタンの取得
         val btnStart1: Button = findViewById(R.id.btnStart1)
 
-        fun generateRandomFourDigitNumber(): Int {
-            return Random.nextInt(1000, 9999)
-        }
-
-        fun createBitMatrix(data: String): BitMatrix? {
-            val multiFormatWriter = MultiFormatWriter()
-            val hints = mapOf(
-                // マージン
-                EncodeHintType.MARGIN to 0,
-                // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
-                EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-            )
-
-            return multiFormatWriter.encode(
-                data, // QRコード化したいデータ
-                BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
-                170, // 生成されるイメージの高さ(px)
-                200, // 生成されるイメージの横幅(px)
-                hints
-            )
-        }
-
-        fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-            val barcodeEncoder = BarcodeEncoder()
-            return barcodeEncoder.createBitmap(bitMatrix)
-        }
-
-        fun createQrCode(data: String): Bitmap? {
-            return try {
-                val bitMatrix = createBitMatrix(data)
-                bitMatrix?.let { createBitmap(it) }
-            } catch (e: Exception) {
-                null
-            }
-        }
-
         // ボタンを押したら次の画面へ
         btnStart1.setOnClickListener {
+
             // ボタンの状態をSharedPreferencesに保存
             val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
@@ -93,21 +52,29 @@ class SecondActivity : AppCompatActivity() {
                 isEnabled = false // ボタンを無効にする
             }
 
-            //合計０で決定が押されたときの処理
-            if(count+count1+count2+count3==0){
+            // 合計が0の場合の処理
+            if (count + count1 + count2 + count3 == 0) {
                 // KakuninActivityに移動するIntentを作成
                 val intent = Intent(this, KakuninActivity::class.java)
                 startActivity(intent)
-            } else if (count+count1+count2+count3>0){
-                val randomNumber = generateRandomFourDigitNumber()
-                println("Random 4-digit number: $randomNumber")
+            } else if (count + count1 + count2 + count3 > 0) {
 
-                // QRコードを生成
-                val qrCode = createQrCode(randomNumber.toString())
+                // ランダムな4桁の数字を生成
+                val randomNumber = QRCodeUtils.generateRandomFourDigitNumber()
+                println("ランダムな4桁の数字: $randomNumber")
 
-                // QRコードをBitmapとしてIntentに渡す
+                // ランダムな数字からQRコードを生成
+                val qrCode = QRCodeUtils.createQrCode(randomNumber.toString())
+
+                // QRコードのBitmapをIntentに渡す
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("QR_CODE", qrCode)
+                qrCode?.let {
+                    val stream = ByteArrayOutputStream()
+                    it.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    val byteArray = stream.toByteArray()
+                    intent.putExtra("QR_CODE", byteArray)
+                }
+
                 startActivity(intent)
             }
         }
