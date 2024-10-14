@@ -5,11 +5,7 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import android.view.MotionEvent
-
-class TimerFragment : Fragment() {
+import android.view.ViewGroupclass TimerFragment : Fragment() {
     private lateinit var timerText: TextView
     private var countDownTimer: CountDownTimer? = null
     private val startTimeInMillis: Long = 30 * 60 * 1000 // 30分をミリ秒で設定
@@ -39,3 +35,7 @@ class TimerFragment : Fragment() {
         }.start()
     }
 }
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import android.view.MotionEvent
+
