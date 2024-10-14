@@ -108,6 +108,14 @@
 
     </org.osmdroid.views.MapView> <!--map-->
 
+    <!--<Button
+        android:id="@+id/btn_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+-->
     <!--<TextView
         android:id="@+id/location_text"
         android:layout_width="wrap_content"
