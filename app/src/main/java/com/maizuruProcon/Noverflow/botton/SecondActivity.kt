@@ -15,35 +15,23 @@ import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.maizuruProcon.Noverflow.MainActivity
-import kotlin.random.Random
 import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.ListenerRegistration
-import getCollectionData
-import getDocumentData
-import getFieldData
 import updateFieldDataWithOption
-
-
+import kotlin.random.Random
 
 class SecondActivity : AppCompatActivity() {
 
-    private var count=0//瓶
-    private var count1=0//缶
-    private var count2=0//燃えるゴミ
-    private var count3=0//ペットポトル
+    private val counts = IntArray(4) // 各ゴミのカウントを格納する配列
     private lateinit var binding: ActivitySecondBinding
+
     @SuppressLint("MissingInflatedId")
-
-    private lateinit var listenerRegistration: ListenerRegistration
-
-    override fun onCreate(savedInstanceState:Bundle?){
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_second)
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
@@ -53,167 +41,153 @@ class SecondActivity : AppCompatActivity() {
 
         // ボタンを押したら次の画面へ
         btnStart1.setOnClickListener {
-            // ボタンの状態をSharedPreferencesに保存
-            val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
-            with(sharedPref.edit()) {
-                putBoolean("btnStartDisabled", true)
-                putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
-                apply()
+            handleStartButtonClick(btnStart1)
+        }
+
+        // 各ゴミカウントのボタン設定
+        setupCountButtons()
+
+        // 戻るボタン
+        val btnBack: Button = findViewById(R.id.btnBack)
+        btnBack.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+    }
+
+    private fun setupCountButtons() {
+        val textViews = arrayOf(
+            findViewById<TextView>(R.id.tv),
+            findViewById<TextView>(R.id.tv1),
+            findViewById<TextView>(R.id.tv2),
+            findViewById<TextView>(R.id.tv3)
+        )
+
+        val incrementButtons = arrayOf(
+            findViewById<Button>(R.id.count1in),
+            findViewById<Button>(R.id.count2in),
+            findViewById<Button>(R.id.count3in),
+            findViewById<Button>(R.id.count4in)
+        )
+
+        val decrementButtons = arrayOf(
+            findViewById<Button>(R.id.count1re),
+            findViewById<Button>(R.id.count2re),
+            findViewById<Button>(R.id.count3re),
+            findViewById<Button>(R.id.count4re)
+        )
+
+        for (i in counts.indices) {
+            val index = i
+            incrementButtons[i].setOnClickListener {
+                counts[index]++
+                textViews[index].text = counts[index].toString()
             }
 
-            // ボタンの見た目を更新
-            btnStart1.apply {
-                setBackgroundColor(Color.GRAY) // ボタンの背景を灰色にする
-                text = "利用不可" // ボタンのテキストを「利用不可」に設定
-                isEnabled = false // ボタンを無効にする
+            decrementButtons[i].setOnClickListener {
+                if (counts[index] > 0) {
+                    counts[index]--
+                }
+                textViews[index].text = counts[index].toString()
             }
+        }
+    }
 
-            //合計０で決定が押されたときの処理
-            if(count+count1+count2+count3==0){
-                // KakuninActivityに移動するIntentを作成
-                val intent = Intent(this, KakuninActivity::class.java)
-                startActivity(intent)
-            } else if (count+count1+count2+count3>0){
-                val randomNumber = generateRandomFourDigitNumber()
-                println("Random 4-digit number: $randomNumber")
+    private fun handleStartButtonClick(btnStart: Button) {
+        // ボタンの状態をSharedPreferencesに保存
+        val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putBoolean("btnStartDisabled", true)
+            putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
+            apply()
+        }
 
+        // ボタンの見た目を更新
+        btnStart.apply {
+            setBackgroundColor(Color.GRAY) // ボタンの背景を灰色にする
+            text = "利用不可" // ボタンのテキストを「利用不可」に設定
+            isEnabled = false // ボタンを無効にする
+        }
+
+        // 合計の計算
+        val totalCount = counts.sum()
+        if (totalCount == 0) {
+            startActivity(Intent(this, KakuninActivity::class.java))
+        } else if (totalCount > 0) {
+            val randomNumber = generateRandomFourDigitNumber()
+            println("Random 4-digit number: $randomNumber")
+
+            updateFieldDataWithOption(
+                collectionName = "noverflow-apps",
+                documentId = "pixel4a",
+                fieldName = "token",
+                value = randomNumber,
+                updateMode = UpdateMode.SET,
+                onSuccess = {
+                    Log.d("Firestore", "Field updated successfully")
+                },
+                onFailure = { exception ->
+                    Log.e("Firestore", "Error updating field", exception)
+                }
+            )
+            val data = mapOf(
+                "burningGarbage" to counts[0],
+                "plasticGarbage" to counts[1],
+                "bottles" to counts[2],
+                "cans" to counts[3]
+            )
+
+            for ((key, value) in data) {
                 updateFieldDataWithOption(
                     collectionName = "noverflow-apps",
                     documentId = "pixel4a",
-                    fieldName = "token",
-                    value = randomNumber,
-                    updateMode = UpdateMode.SET,
+                    fieldName = "garbages.$key",  // フィールド名を "garbages.<key>" に
+                    value = value,                // 値を更新
+                    updateMode = UpdateMode.INCREMENT,
                     onSuccess = {
-                        Log.d("Firestore", "Field updated successfully")
+                        Log.d("Firestore", "$key updated successfully with value $value")
                     },
                     onFailure = { exception ->
-                        Log.e("Firestore", "Error updating field", exception)
+                        Log.e("Firestore", "Error updating $key", exception)
                     }
                 )
-
-
-                // QRコードを生成
-                val qrCode = createQrCode(randomNumber)
-
-                // QRコードをBitmapとしてIntentに渡す
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("QR_CODE", qrCode)
-                startActivity(intent)
             }
-        }
 
-        val tv: TextView =findViewById(R.id.tv)
-        val count1in: Button=findViewById(R.id.count1in)
-        val count1re: Button=findViewById(R.id.count1re)
+            // QRコードを生成
+            val qrCode = createQrCode(randomNumber)
 
-        count1in.setOnClickListener{
-            count++
-            tv.text=count.toString()
-        }
-
-        count1re.setOnClickListener{
-            if(count>0) {
-                count--
-            }
-            if(count<0){
-                count==0
-            }
-            tv.text=count.toString()
-        }
-
-        val tv1: TextView =findViewById(R.id.tv1)
-        val count2in: Button=findViewById(R.id.count2in)
-        val count2re: Button=findViewById(R.id.count2re)
-
-        count2in.setOnClickListener{
-            count1++
-            tv1.text=count1.toString()
-        }
-
-        count2re.setOnClickListener{
-            if(count1>0) {
-                count1--
-            }
-            if(count1<0){
-                count1==0
-            }
-            tv1.text=count1.toString()
-        }
-
-        val tv2: TextView =findViewById(R.id.tv2)
-        val count3in: Button=findViewById(R.id.count3in)
-        val count3re: Button=findViewById(R.id.count3re)
-
-        count3in.setOnClickListener{
-            count2++
-            tv2.text=count2.toString()
-        }
-
-        count3re.setOnClickListener{
-            if(count2>0) {
-                count2--
-            }
-            if(count2<0){
-                count2==0
-            }
-            tv2.text=count2.toString()
-        }
-
-        val tv3: TextView =findViewById(R.id.tv3)
-        val count4in: Button=findViewById(R.id.count4in)
-        val count4re: Button=findViewById(R.id.count4re)
-
-        count4in.setOnClickListener{
-            count3++
-            tv3.text=count3.toString()
-        }
-
-        count4re.setOnClickListener{
-            if(count3>0) {
-                count3--
-            }
-            if(count3<0){
-                count3==0
-            }
-            tv3.text=count3.toString()
-        }
-
-        val btnBack :Button = findViewById(R.id.btnBack)
-        //3)戻るボタン(アクティビティの終了)
-        btnBack.setOnClickListener{
+            // QRコードをBitmapとしてIntentに渡す
             val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("QR_CODE", qrCode)
             startActivity(intent)
-       }
+        }
     }
 
-    fun generateRandomFourDigitNumber(): String {
+    private fun generateRandomFourDigitNumber(): String {
         return String.format("%04d", Random.nextInt(0, 10000))
     }
 
-    fun createBitMatrix(data: String): BitMatrix? {
+    private fun createBitMatrix(data: String): BitMatrix? {
         val multiFormatWriter = MultiFormatWriter()
         val hints = mapOf(
-            // マージン
             EncodeHintType.MARGIN to 0,
-            // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
             EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
         )
 
         return multiFormatWriter.encode(
-            data, // QRコード化したいデータ
-            BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
-            170, // 生成されるイメージの高さ(px)
-            200, // 生成されるイメージの横幅(px)
+            data,
+            BarcodeFormat.QR_CODE,
+            170,
+            200,
             hints
         )
     }
 
-    fun createBitmap(bitMatrix: BitMatrix): Bitmap {
+    private fun createBitmap(bitMatrix: BitMatrix): Bitmap {
         val barcodeEncoder = BarcodeEncoder()
         return barcodeEncoder.createBitmap(bitMatrix)
     }
 
-    fun createQrCode(data: String): Bitmap? {
+    private fun createQrCode(data: String): Bitmap? {
         return try {
             val bitMatrix = createBitMatrix(data)
             bitMatrix?.let { createBitmap(it) }
@@ -222,4 +196,3 @@ class SecondActivity : AppCompatActivity() {
         }
     }
 }
-
