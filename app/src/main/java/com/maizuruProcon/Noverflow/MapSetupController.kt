@@ -52,8 +52,7 @@ class MapSetupController(private val context: Context, private val mapView: MapV
                     compassOverlay.enableCompass()
                     mapView.overlays.add(compassOverlay)
 
-                    // 現在地をコールバックで返す
-                    callback(centerPoint)
+                    callback(centerPoint)// 現在地をコールバックで返す
                 } else {
                     Log.d(tag, "Location not available")
                 }

@@ -6,10 +6,11 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import kotlin.random.Random
 
 object QRCodeUtils {
-    fun generateRandomFourDigitNumber(): Int {
-        return (1000..9999).random()
+    fun generateRandomFourDigitNumber(): String {
+        return String.format("%04d", Random.nextInt(0, 10000))
     }
 
     fun createBitMatrix(data: String): BitMatrix? {

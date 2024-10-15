@@ -7,7 +7,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.preference.PreferenceManager
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.widget.Button
 import android.widget.TextView
@@ -54,7 +53,6 @@ class FourActivity : AppCompatActivity(){
         btnTest.setOnClickListener {
             finish()
         }
-
     }
 
     private fun setupMap() {

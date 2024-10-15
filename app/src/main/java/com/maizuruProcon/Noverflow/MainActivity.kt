@@ -18,11 +18,8 @@ import androidx.activity.enableEdgeToEdge
 import com.maizuruProcon.Noverflow.databinding.ActivityMainBinding
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
-import getCollectionData
-import getDocumentData
-import getFieldData
-import updateFieldDataWithOption
 import android.graphics.BitmapFactory
+import getMapFieldValueSum
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,11 +29,15 @@ class MainActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val updateInterval: Long = 5*60*1000 // 5分
     private lateinit var timerFragment: TimerFragment
+    private lateinit var listenerRegistration: ListenerRegistration
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        FirebaseApp.initializeApp(this)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -73,8 +74,6 @@ class MainActivity : AppCompatActivity() {
 
         // ボタンを取得
         val imageButton: ImageButton = findViewById(R.id.button)
-        val button: Button = findViewById(R.id.test)
-        val resetButton: Button = findViewById(R.id.resetButton)
         val mapButton :Button =findViewById(R.id.mapButton)
 
         qrImage = findViewById(R.id.qr_code_image)
@@ -97,95 +96,47 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // ごみを捨てた回数のカウント
+        var total: Int? = 0
 
-        // SharedPreferencesの読み込み
-        val sharedPref2 = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        Singleton.total = sharedPref2.getInt("total", 0)
-        Singleton.moeru = sharedPref2.getInt("moeru", 0)
-        Singleton.pet = sharedPref2.getInt("pet", 0)
-        Singleton.plastic = sharedPref2.getInt("plastic", 0)
-        Singleton.kan = sharedPref2.getInt("kan", 0)
+        getMapFieldValueSum(// ごみを捨てた回数のカウント
+            collectionName = "noverflow-apps",  // コレクション名
+            documentId = "pixel4a",    // ドキュメントID
+            fieldName = "garbages"      // 取得したいフィールド名
+        ) { result ->
+            total = result
+            total?.let {
+                Log.d("Firestore", "取得した合計値: $total")
 
-        //仮のボタンを押したら+1
-        button.setOnClickListener {
-            Singleton.total += 1
-
-            //レベルバー,レベルの計算
-            // SharedPreferencesにデータを保存
-            val sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-
-            with(sharedPref.edit()) {
-                putInt("total", Singleton.total)
-                apply()
-            }
-
-            // 3で割った余りを計算（レベルバーの値）
-            Singleton.remainder = Singleton.total % 3
-
-            // 3で割ったときの商を計算（レベルの値）
-            Singleton.quotient = Singleton.total / 3
-
-            // 余りの値に基づいて画像を変更
-            if (Singleton.remainder == 3 || Singleton.remainder == 0) {
-                imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
-            } else if (Singleton.remainder == 1) {
-                imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
-            } else if (Singleton.remainder == 2) {
-                imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
+                val remainder = it % 3 // 3で割った余りを計算（レベルバーの値）
+                updateImage(remainder, imageButton)// 余りの値に基づいて画像を変更
+            } ?: run {
+                Log.e("Firestore", "合計値の取得に失敗しました")
             }
         }
 
-        //リセットボタンの実装
-        resetButton.setOnClickListener {
-            Singleton.total = 0
+        //レベルバー,レベルの計算
+        // 3で割った余りを計算（レベルバーの値）
+        val remainder = total?.rem(3)
 
-            // SharedPreferencesにデータを保存
-            with(sharedPref2.edit()) {
-                putInt("total", Singleton.total)
-                apply()
-            }
-
-            // 3で割った余りを計算
-            Singleton.remainder = Singleton.total % 3
-
-            // 余りを求めたときの商を計算
-            Singleton.quotient = Singleton.total / 3
-
-            // 数字の値に基づいて画像を変更
-            if (Singleton.remainder == 3 || Singleton.remainder == 0) {
-                imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
-            } else if (Singleton.remainder == 1) {
-                imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
-            } else if (Singleton.remainder == 2) {
-                imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
-            }
+        // 余りの値に基づいて画像を変更
+        if (remainder == 3 || remainder == 0) {
+            imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
+        } else if (remainder?.toInt() == 1) {
+            imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
+        } else if (remainder?.toInt() == 2) {
+            imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
         }
 
-        // 画像を更新する関数
-        fun updateImage(total: Int, imageButton: ImageButton) {
-            val remainder = total % 3
-            when (remainder) {
-                0, 3 -> imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
-                1 -> imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
-                2 -> imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
-            }
-        }
+        updateImage(remainder, imageButton)// アプリ起動時に画像を設定
 
-        // アプリ起動時に画像を設定
-        updateImage(Singleton.total, imageButton)
+        val byteArray = intent.getByteArrayExtra("QR_CODE")// IntentからQRコードのバイト配列を取得
 
-        // IntentからQRコードのバイト配列を取得
-        val byteArray = intent.getByteArrayExtra("QR_CODE")
-
-        // バイト配列が存在する場合、BitmapにデコードしてImageViewに設定
-        byteArray?.let {
+        byteArray?.let {// バイト配列が存在する場合、BitmapにデコードしてImageViewに設定
             val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
             qrImage.setImageBitmap(bitmap) // ImageViewにQRコードを表示
         }
 
-        // Fragmentを追加
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null) {// Fragmentを追加
             timerFragment = TimerFragment()
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, timerFragment)
@@ -194,8 +145,7 @@ class MainActivity : AppCompatActivity() {
             timerFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as TimerFragment
         }
 
-        //利用不可の時だけタイマーを動かす
-        if (btnStartText == "利用不可") {
+        if (btnStartText == "利用不可") {//利用不可の時だけタイマーを動かす
             startQrUpdateTimer()
             timerFragment.setTimerCallback(object : TimerCallback {
                 override fun onTimerFinished() {
@@ -203,15 +153,13 @@ class MainActivity : AppCompatActivity() {
                     qrImage.setImageBitmap(null)
                     qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
 
-                    // SharedPreferencesの状態をリセット
-                    with(sharedPref2.edit()) {
+                    with(sharedPref.edit()) {// SharedPreferencesの状態をリセット
                         putBoolean("btnStartDisabled", false)
                         putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
                         apply()
                     }
 
-                    // ボタンの状態を元に戻す
-                    binding.btnStart.apply {
+                    binding.btnStart.apply {// ボタンの状態を元に戻す
                         setBackgroundResource(R.drawable.design) // 元の背景に戻す
                         textSize = 80f // テキストサイズを設定
                         text = "捨てる" // テキストを「捨てる」に戻す
@@ -223,13 +171,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // タイマーを停止するメソッド
-    private fun stopQrUpdateTimer() {
+    private fun updateImage(remainder: Int?, imageButton: ImageButton) {// 画像を更新する関数
+        when (remainder) {
+            0, 3 -> imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
+            1 -> imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
+            2 -> imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
+        }
+    }
+
+    private fun stopQrUpdateTimer() {// タイマーを停止するメソッド
         handler.removeCallbacksAndMessages(null)
     }
 
-    // タイマーを開始するメソッド
-    private fun startQrUpdateTimer() {
+    private fun startQrUpdateTimer() {// タイマーを開始するメソッド
         handler.post(object : Runnable {
             override fun run() {
                 updateQrCode()
@@ -238,8 +192,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    // QRコードを更新するメソッド
-    private fun updateQrCode() {
+    private fun updateQrCode() {// QRコードを更新するメソッド
         val randomData = QRCodeUtils.generateRandomFourDigitNumber().toString()
         val qrBitmap = QRCodeUtils.createQrCode(randomData)
         qrBitmap?.let {

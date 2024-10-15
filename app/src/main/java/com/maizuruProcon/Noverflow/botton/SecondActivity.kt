@@ -14,20 +14,21 @@ import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.util.Log
 import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import com.maizuruProcon.Noverflow.QRCodeUtils.generateRandomFourDigitNumber
 import updateFieldDataWithOption
-import kotlin.random.Random
 
 class SecondActivity : AppCompatActivity() {
 
     private val counts = IntArray(4) // 各ゴミのカウントを格納する配列
     private lateinit var binding: ActivitySecondBinding
-
+    private lateinit var listenerRegistration: ListenerRegistration
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +90,6 @@ class SecondActivity : AppCompatActivity() {
                 counts[index]++
                 textViews[index].text = counts[index].toString()
             }
-
             decrementButtons[i].setOnClickListener {
                 if (counts[index] > 0) {
                     counts[index]--
@@ -160,10 +160,6 @@ class SecondActivity : AppCompatActivity() {
             intent.putExtra("QR_CODE", qrCode)
             startActivity(intent)
         }
-    }
-
-    private fun generateRandomFourDigitNumber(): String {
-        return String.format("%04d", Random.nextInt(0, 10000))
     }
 
     private fun createBitMatrix(data: String): BitMatrix? {

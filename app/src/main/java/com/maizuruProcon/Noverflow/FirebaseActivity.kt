@@ -1,3 +1,4 @@
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -70,6 +71,36 @@ fun getFieldData(
             onSuccess(null) // ドキュメントが存在しない場合
         }
     }
+}
+
+fun getMapFieldValueSum(
+    collectionName: String,
+    documentId: String,
+    fieldName: String,
+    onResult: (Int?) -> Unit  // 合計値を返すコールバック
+) {
+    getFieldData(
+        collectionName = collectionName,
+        documentId = documentId,
+        fieldName = fieldName,
+        onSuccess = { fieldValue ->
+            // フィールドがMapであるかを確認
+            val mapField = fieldValue as? Map<String, Number>
+            if (mapField != null) {
+                // Mapの値の合計を計算
+                val total = mapField.values.sumOf { it.toInt() }
+                Log.d("Firestore", "合計値: $total")
+                onResult(total)  // 合計値を返す
+            } else {
+                Log.e("Firestore", "フィールドがMap型ではありません")
+                onResult(null)  // 失敗時にはnullを返す
+            }
+        },
+        onFailure = { exception ->
+            Log.e("Firestore", "Error getting field: ", exception)
+            onResult(null)  // 失敗時にはnullを返す
+        }
+    )
 }
 
 enum class UpdateMode {
