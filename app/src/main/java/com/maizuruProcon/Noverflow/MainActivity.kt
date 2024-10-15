@@ -6,22 +6,12 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import android.graphics.Bitmap
 import android.widget.Button
 import android.widget.ImageView
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.common.BitMatrix
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.journeyapps.barcodescanner.BarcodeEncoder
-import kotlin.random.Random
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageButton
 import android.content.Context
-import android.content.BroadcastReceiver
-import android.content.IntentFilter
 import com.maizuruProcon.Noverflow.botton.SecondActivity
 import android.graphics.Color
 import androidx.activity.enableEdgeToEdge
@@ -32,14 +22,16 @@ import getCollectionData
 import getDocumentData
 import getFieldData
 import updateFieldDataWithOption
+import android.graphics.BitmapFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var timerFinishedReceiver: BroadcastReceiver
-    private var updateCount = 0
-    private val maxUpdates = 5 // 最大更新回数の設定(5)
-    private lateinit var timerFragment: TimerFragment
     private lateinit var binding: ActivityMainBinding
+    private lateinit var qrImage: ImageView
+    private lateinit var btnstart: Button
+    private val handler = Handler(Looper.getMainLooper())
+    private val updateInterval: Long = 5*60*1000 // 5分
+    private lateinit var timerFragment: TimerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,9 +55,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         // SharedPreferencesからボタンの状態を読み取る
-        val sharedPref2 = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
-        val isBtnStartDisabled = sharedPref2.getBoolean("btnStartDisabled", false)
-        val btnStartText = sharedPref2.getString("btnStartText", "捨てる")
+        val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
+        val isBtnStartDisabled = sharedPref.getBoolean("btnStartDisabled", false)
+        val btnStartText = sharedPref.getString("btnStartText", "捨てる")
 
         // ボタンの状態を設定
         binding.btnStart.apply {
@@ -83,8 +75,10 @@ class MainActivity : AppCompatActivity() {
         val imageButton: ImageButton = findViewById(R.id.button)
         val button: Button = findViewById(R.id.test)
         val resetButton: Button = findViewById(R.id.resetButton)
-        val btnstart: Button = findViewById(R.id.btnStart)
         val mapButton :Button =findViewById(R.id.mapButton)
+
+        qrImage = findViewById(R.id.qr_code_image)
+        btnstart = findViewById(R.id.btnStart)
 
         // ボタンが押された時の処理(画面遷移)
         btnstart.setOnClickListener {
@@ -106,12 +100,12 @@ class MainActivity : AppCompatActivity() {
         // ごみを捨てた回数のカウント
 
         // SharedPreferencesの読み込み
-        val sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        Singleton.total = sharedPref.getInt("total", 0)
-        Singleton.moeru = sharedPref.getInt("moeru", 0)
-        Singleton.pet = sharedPref.getInt("pet", 0)
-        Singleton.plastic = sharedPref.getInt("plastic", 0)
-        Singleton.kan = sharedPref.getInt("kan", 0)
+        val sharedPref2 = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        Singleton.total = sharedPref2.getInt("total", 0)
+        Singleton.moeru = sharedPref2.getInt("moeru", 0)
+        Singleton.pet = sharedPref2.getInt("pet", 0)
+        Singleton.plastic = sharedPref2.getInt("plastic", 0)
+        Singleton.kan = sharedPref2.getInt("kan", 0)
 
         //仮のボタンを押したら+1
         button.setOnClickListener {
@@ -147,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             Singleton.total = 0
 
             // SharedPreferencesにデータを保存
-            with(sharedPref.edit()) {
+            with(sharedPref2.edit()) {
                 putInt("total", Singleton.total)
                 apply()
             }
@@ -181,127 +175,75 @@ class MainActivity : AppCompatActivity() {
         // アプリ起動時に画像を設定
         updateImage(Singleton.total, imageButton)
 
-        // ImageViewの取得
-        val qrImage: ImageView = findViewById(R.id.qr_code_image)
+        // IntentからQRコードのバイト配列を取得
+        val byteArray = intent.getByteArrayExtra("QR_CODE")
 
-        // IntentからQRコードを取得
-        val qrCode: Bitmap? = intent.getParcelableExtra("QR_CODE")
-
-        // タイマーのフラグメントを追加
-        timerFragment = TimerFragment()
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, timerFragment)
-            .commit()
-
-        // QRコードをImageViewに設定
-        qrCode?.let {
-            qrImage.setImageBitmap(it)
-            timerFragment.startTimer() // QRコードが生成された後にタイマーを起動
+        // バイト配列が存在する場合、BitmapにデコードしてImageViewに設定
+        byteArray?.let {
+            val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+            qrImage.setImageBitmap(bitmap) // ImageViewにQRコードを表示
         }
 
-        // タイマー終了時にQRコード更新と処理を行うためのBroadcastReceiverを登録
-        timerFinishedReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (updateCount < maxUpdates) {
-                    val randomNumber = generateRandomFourDigitNumber()
-                    println("Random 4-digit number: $randomNumber")
+        // Fragmentを追加
+        if (savedInstanceState == null) {
+            timerFragment = TimerFragment()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, timerFragment)
+                .commit()
+        } else {
+            timerFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as TimerFragment
+        }
 
-                    updateFieldDataWithOption(
-                        collectionName = "noverflow-apps",
-                        documentId = "pixel4a",
-                        fieldName = "token",
-                        value = randomNumber,
-                        updateMode = UpdateMode.SET,
-                        onSuccess = {
-                            Log.d("Firestore", "Field updated successfully")
-                        },
-                        onFailure = { exception ->
-                            Log.e("Firestore", "Error updating field", exception)
-                        }
-                    )
+        //利用不可の時だけタイマーを動かす
+        if (btnStartText == "利用不可") {
+            startQrUpdateTimer()
+            timerFragment.setTimerCallback(object : TimerCallback {
+                override fun onTimerFinished() {
+                    stopQrUpdateTimer()
+                    qrImage.setImageBitmap(null)
+                    qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
 
-                    val qrCode = createQrCode(randomNumber)
-                    runOnUiThread {
-                        qrImage.setImageBitmap(qrCode)
+                    // SharedPreferencesの状態をリセット
+                    with(sharedPref2.edit()) {
+                        putBoolean("btnStartDisabled", false)
+                        putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
+                        apply()
                     }
-                    updateCount++
-                    timerFragment.startTimer() // タイマーを再起動
+
+                    // ボタンの状態を元に戻す
+                    binding.btnStart.apply {
+                        setBackgroundResource(R.drawable.design) // 元の背景に戻す
+                        textSize = 80f // テキストサイズを設定
+                        text = "捨てる" // テキストを「捨てる」に戻す
+                        isEnabled = true // ボタンを有効にする
+                    }
                 }
-            }
-        }
-
-        // BroadcastReceiverを登録
-        registerReceiver(timerFinishedReceiver, IntentFilter("TIMER_FINISHED"),
-            RECEIVER_NOT_EXPORTED
-        )
-
-        // サービスのインテントを作成し、タイマーをバックグラウンドで実行
-        val intentService = Intent(this, TimerService::class.java)
-        startService(intentService) // サービスを開始
-
-        // タイマーが終了したらボタンの状態を元に戻す
-        Handler(Looper.getMainLooper()).postDelayed({
-            runOnUiThread {
-                qrImage.setImageBitmap(null) // QRコードをクリア
-                qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
-
-                // SharedPreferencesの状態をリセット
-                with(sharedPref2.edit()) {
-                    putBoolean("btnStartDisabled", false)
-                    putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
-                    apply()
-                }
-
-                // ボタンの状態を元に戻す
-                binding.btnStart.apply {
-                    setBackgroundResource(R.drawable.design) // 元の背景に戻す
-                    textSize = 80f // テキストサイズを設定
-                    text = "捨てる" // テキストを「捨てる」に戻す
-                    isEnabled = true // ボタンを有効にする
-                }
-            }
-        }, 1 * 60 * 1000L) // 5分後に画像とボタンの状態をリセット
-    }
-
-    fun generateRandomFourDigitNumber(): String {
-        return String.format("%04d", Random.nextInt(0, 10000))
-    }
-
-    fun createBitMatrix(data: String): BitMatrix? {
-        val multiFormatWriter = MultiFormatWriter()
-        val hints = mapOf(
-            // マージン
-            EncodeHintType.MARGIN to 0,
-            // 誤り訂正レベルを一番低いレベルで設定 エンコード対象のデータ量が少ないため
-            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-        )
-
-        return multiFormatWriter.encode(
-            data, // QRコード化したいデータ
-            BarcodeFormat.QR_CODE, // QRコードにしたい場合はこれを指定
-            170, // 生成されるイメージの高さ(px)
-            200, // 生成されるイメージの横幅(px)
-            hints
-        )
-    }
-
-    fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-        val barcodeEncoder = BarcodeEncoder()
-        return barcodeEncoder.createBitmap(bitMatrix)
-    }
-
-    fun createQrCode(data: String): Bitmap? {
-        return try {
-            val bitMatrix = createBitMatrix(data)
-            bitMatrix?.let { createBitmap(it) }
-        } catch (e: Exception) {
-            null
+            })
+            timerFragment.startTimer()
         }
     }
 
-    // Activity/Fragmentが終了する際にBroadcastReceiverを解除
-    override fun onDestroy() {
-        unregisterReceiver(timerFinishedReceiver)
-        super.onDestroy()
+    // タイマーを停止するメソッド
+    private fun stopQrUpdateTimer() {
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    // タイマーを開始するメソッド
+    private fun startQrUpdateTimer() {
+        handler.post(object : Runnable {
+            override fun run() {
+                updateQrCode()
+                handler.postDelayed(this, updateInterval)
+            }
+        })
+    }
+
+    // QRコードを更新するメソッド
+    private fun updateQrCode() {
+        val randomData = QRCodeUtils.generateRandomFourDigitNumber().toString()
+        val qrBitmap = QRCodeUtils.createQrCode(randomData)
+        qrBitmap?.let {
+            qrImage.setImageBitmap(it)
+        }
     }
 }

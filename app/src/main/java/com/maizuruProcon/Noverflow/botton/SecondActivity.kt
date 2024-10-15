@@ -8,19 +8,18 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import com.maizuruProcon.Noverflow.R
+import com.maizuruProcon.Noverflow.MainActivity
+import com.maizuruProcon.Noverflow.KakuninActivity
+import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
+import android.content.Context
+import android.util.Log
+import com.google.firebase.FirebaseApp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.journeyapps.barcodescanner.BarcodeEncoder
-import com.maizuruProcon.Noverflow.MainActivity
-import com.maizuruProcon.Noverflow.KakuninActivity
-import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
-import android.content.Context
-import android.graphics.Color
-import android.util.Log
-import com.google.firebase.FirebaseApp
 import updateFieldDataWithOption
 import kotlin.random.Random
 
@@ -41,6 +40,14 @@ class SecondActivity : AppCompatActivity() {
 
         // ボタンを押したら次の画面へ
         btnStart1.setOnClickListener {
+
+            // ボタンの状態をSharedPreferencesに保存
+            val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                putBoolean("btnStartDisabled", true)
+                putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
+                apply()
+            }
             handleStartButtonClick(btnStart1)
         }
 
@@ -99,13 +106,6 @@ class SecondActivity : AppCompatActivity() {
             putBoolean("btnStartDisabled", true)
             putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
             apply()
-        }
-
-        // ボタンの見た目を更新
-        btnStart.apply {
-            setBackgroundColor(Color.GRAY) // ボタンの背景を灰色にする
-            text = "利用不可" // ボタンのテキストを「利用不可」に設定
-            isEnabled = false // ボタンを無効にする
         }
 
         // 合計の計算
