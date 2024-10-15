@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var timerFragment: TimerFragment
     private lateinit var listenerRegistration: ListenerRegistration
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets///apple apple
+            insets
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -113,21 +112,6 @@ class MainActivity : AppCompatActivity() {
                 Log.e("Firestore", "合計値の取得に失敗しました")
             }
         }
-
-        //レベルバー,レベルの計算
-        // 3で割った余りを計算（レベルバーの値）
-        val remainder = total?.rem(3)
-
-        // 余りの値に基づいて画像を変更
-        if (remainder == 3 || remainder == 0) {
-            imageButton.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
-        } else if (remainder?.toInt() == 1) {
-            imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
-        } else if (remainder?.toInt() == 2) {
-            imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
-        }
-
-        updateImage(remainder, imageButton)// アプリ起動時に画像を設定
 
         val byteArray = intent.getByteArrayExtra("QR_CODE")// IntentからQRコードのバイト配列を取得
 

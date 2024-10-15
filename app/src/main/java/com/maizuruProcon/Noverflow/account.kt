@@ -2,139 +2,104 @@ package com.maizuruProcon.Noverflow
 
 import Singleton
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.content.Context
+import android.util.Log
 import android.view.View
+import getFieldData
+import getMapFieldValueSum
 
 class account: AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.account_layout)
 
+        val counts = IntArray(4) // 各ゴミのカウントを格納する配列
+
         // ボタンを取得
         val backButton: ImageButton = findViewById(R.id.backbutton)
         val imageView: ImageView = findViewById(R.id.level_bar)
-        val resetButton: Button = findViewById(R.id.resetButton2)
 
-        // ボタンが押された時の処理
-        backButton.setOnClickListener {
-            // 現在のアクティビティを終了して前の画面に戻る
-            finish()
+        backButton.setOnClickListener {// ボタンが押された時の処理
+            finish()// 現在のアクティビティを終了して前の画面に戻る
         }
 
-        //レベルバー,レベルの計算
+        var total: Int?
+        getMapFieldValueSum(// ごみを捨てた回数のカウント
+            collectionName = "noverflow-apps",  // コレクション名
+            documentId = "pixel4a",    // ドキュメントID
+            fieldName = "garbages"      // 取得したいフィールド名
+        ) { result ->
+            total = result
+            total?.let {
+                Log.d("Firestore", "取得した合計値: $total")
 
-        // SharedPreferencesからデータを読み込む
-        val sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        Singleton.total = sharedPref.getInt("total", 0)
-        Singleton.moeru = sharedPref.getInt("moeru", 0)
-        Singleton.pet = sharedPref.getInt("pet", 0)
-        Singleton.plastic = sharedPref.getInt("plastic", 0)
-        Singleton.kan = sharedPref.getInt("kan", 0)
+                val remainder = it % 3
+                val quotient = it / 3
+                updateImage(remainder, imageView)// 余りの値に基づいて画像を変更
 
-        // 3で割った余りを計算（レベルバーの値）
-        Singleton.remainder = Singleton.total % 3
+                val level_text: TextView = findViewById(R.id.textViewQuotient)//今のレベルの表示
+                level_text.text = "your level : ${quotient}"
 
-        // 3で割ったときの商を計算（レベルの値）
-        Singleton.quotient = Singleton.total / 3
-
-        // 余りの値に基づいて画像を変更
-        if (Singleton.remainder == 3 || Singleton.remainder == 0) {
-            imageView.setImageResource(R.drawable.count1)  // 余りが0,3の時の画像
-        } else if (Singleton.remainder == 1) {
-            imageView.setImageResource(R.drawable.count2)  // 余りが1の時の画像
-        } else if (Singleton.remainder == 2) {
-            imageView.setImageResource(R.drawable.count3)  // 余りが2の時の画像
-        }
-
-        //仮の値（分別の結果を受け取る）
-        val garbage_kinds: Int = 1
-
-        //捨てたごみの種類別カウント
-        if (garbage_kinds == 1) {
-            Singleton.moeru += 1
-
-            with(sharedPref.edit()) {
-                putInt("moeru", Singleton.moeru)
-                apply()
-            }
-
-        } else if (garbage_kinds == 2) {
-            Singleton.pet += 1
-
-            with(sharedPref.edit()) {
-                putInt("pet", Singleton.pet)
-                apply()
-            }
-
-        } else if (garbage_kinds == 3) {
-            Singleton.plastic += 1
-
-            with(sharedPref.edit()) {
-                putInt("plastic", Singleton.plastic)
-                apply()
-            }
-
-        } else if (garbage_kinds == 4){
-            Singleton.kan += 1
-
-            with(sharedPref.edit()) {
-                putInt("kan", Singleton.kan)
-                apply()
-            }
-
-        }
-
-        // SharedPreferencesからデータを読み込む
-        Singleton.moeru = sharedPref.getInt("moeru", 0)
-        Singleton.pet = sharedPref.getInt("pet", 0)
-        Singleton.plastic = sharedPref.getInt("plastic", 0)
-        Singleton.kan = sharedPref.getInt("kan", 0)
-
-        //合計の計算
-        val all_total: Int =Singleton.moeru+Singleton.pet+Singleton.plastic+Singleton.kan
-
-        //利用回数の表示
-        val moeruTotalTextView: TextView = findViewById(R.id.moeru_total)
-        moeruTotalTextView.text = "${Singleton.moeru}個"
-
-        val petTotalTextView: TextView = findViewById(R.id.pet_total)
-        petTotalTextView.text = "${Singleton.pet}個"
-
-        val plasticTotalTextView: TextView = findViewById(R.id.plastic_total)
-        plasticTotalTextView.text = "${Singleton.plastic}個"
-
-        val kanTotalTextView: TextView = findViewById(R.id.kan_total)
-        kanTotalTextView.text = "${Singleton.kan}個"
-
-        // 今のレベルの表示
-        val level_text: TextView = findViewById(R.id.textViewQuotient)
-        level_text.text = "your level : ${Singleton.quotient}"
-
-        //合計の表示
-        val total_text: TextView = findViewById(R.id.all_total)
-        total_text.text = "合計${all_total}個"
-
-        //リセットボタンの実装
-        resetButton.setOnClickListener {
-            Singleton.moeru = 0
-            Singleton.pet = 0
-            Singleton.plastic = 0
-            Singleton.kan = 0
-
-            // SharedPreferencesにデータを保存
-            with(sharedPref.edit()) {
-                putInt("moeru", Singleton.moeru)
-                putInt("pet", Singleton.pet)
-                putInt("plastic", Singleton.plastic)
-                putInt("kan", Singleton.kan)
-                apply()
+                val total_text: TextView = findViewById(R.id.all_total)//合計の表示
+                total_text.text = "合計${total}個"
+            } ?: run {
+                Log.e("Firestore", "合計値の取得に失敗しました")
             }
         }
+
+        val data = mapOf(
+            "burningGarbage" to counts[0],
+            "plasticGarbage" to counts[1],
+            "bottles" to counts[2],
+            "cans" to counts[3]
+        )
+
+        for ((key) in data) {
+            getFieldData(
+                collectionName = "noverflow-apps",
+                documentId = "pixel4a",
+                fieldName = "garbages.$key",  // フィールド名を "garbages.<key>" に
+
+                onSuccess = { fieldValue ->  // 成功時の処理
+                    Log.d("Firestore", "$key field value: $fieldValue")
+
+                    // 取得した値をInt型に変換
+                    val valueAsInt = when (fieldValue) {
+                        is Long -> fieldValue.toInt()  // Longの場合
+                        is Double -> fieldValue.toInt()  // Doubleの場合（小数点切り捨て）
+                        else -> 0  // 値が取得できなかった場合のデフォルト値
+                    }
+
+                    // TextViewに反映
+                    when (key) {
+                        "burningGarbage" -> {
+                            val moeruTotalTextView: TextView = findViewById(R.id.moeru_total)
+                            moeruTotalTextView.text = "$valueAsInt 個"
+                        }
+                        "plasticGarbage" -> {
+                            val plasticTotalTextView: TextView = findViewById(R.id.plastic_total)
+                            plasticTotalTextView.text = "$valueAsInt 個"
+                        }
+                        "bottles" -> {
+                            val petTotalTextView: TextView = findViewById(R.id.pet_total)
+                            petTotalTextView.text = "$valueAsInt 個"
+                        }
+                        "cans" -> {
+                            val kanTotalTextView: TextView = findViewById(R.id.kan_total)
+                            kanTotalTextView.text = "$valueAsInt 個"
+                        }
+                    }
+                },
+                onFailure = { exception ->  // 失敗時の処理
+                    Log.e("Firestore", "Error getting field: ", exception)
+                }
+            )
+        }
+
+
 
         //背景の制御
         // ImageViewの取得
@@ -411,6 +376,15 @@ class account: AppCompatActivity()  {
             back13.visibility = View.VISIBLE // 表示
             back14.visibility = View.VISIBLE // 表示
             back15.visibility = View.VISIBLE // 表示
+        }
+
+
+    }
+    private fun updateImage(remainder: Int?, imageView: ImageView) {// 画像を更新する関数
+        when (remainder) {
+            0, 3 -> imageView.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
+            1 -> imageView.setImageResource(R.drawable.count2)  // 数字が1の時の画像
+            2 -> imageView.setImageResource(R.drawable.count3)  // 数字が2の時の画像
         }
     }
 }
