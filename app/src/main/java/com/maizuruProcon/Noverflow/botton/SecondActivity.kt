@@ -36,11 +36,8 @@ class SecondActivity : AppCompatActivity() {
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
 
-        // ボタンの取得
-        val btnStart1: Button = findViewById(R.id.btnStart1)
-
-        // ボタンを押したら次の画面へ
-        btnStart1.setOnClickListener {
+        val btnStart1: Button = findViewById(R.id.btnStart1)// ボタンの取得
+        btnStart1.setOnClickListener {// ボタンを押したら次の画面へ
 
             // ボタンの状態をSharedPreferencesに保存
             val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
@@ -69,14 +66,12 @@ class SecondActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.tv2),
             findViewById<TextView>(R.id.tv3)
         )
-
         val incrementButtons = arrayOf(
             findViewById<Button>(R.id.count1in),
             findViewById<Button>(R.id.count2in),
             findViewById<Button>(R.id.count3in),
             findViewById<Button>(R.id.count4in)
         )
-
         val decrementButtons = arrayOf(
             findViewById<Button>(R.id.count1re),
             findViewById<Button>(R.id.count2re),
@@ -152,8 +147,8 @@ class SecondActivity : AppCompatActivity() {
                 )
             }
 
-            // QRコードを生成
-            val qrCode = createQrCode(randomNumber)
+
+            val qrCode = createQrCode(randomNumber)// QRコードを生成
 
             // QRコードをBitmapとしてIntentに渡す
             val intent = Intent(this, MainActivity::class.java)

@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 class TimerFragment : Fragment() {
     private lateinit var timerText: TextView
     private var countDownTimer: CountDownTimer? = null
-    private val startTimeInMillis: Long = 1 * 60 * 1000 // 30分をミリ秒で設定
+    private val startTimeInMillis: Long = 30 * 60 * 1000 // 30分をミリ秒で設定
     private var callback: TimerCallback? = null
 
     override fun onCreateView(

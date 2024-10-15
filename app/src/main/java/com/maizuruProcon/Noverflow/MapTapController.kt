@@ -57,8 +57,6 @@ class MapTapController(private val mapView: MapView, private val locationTextVie
             }
 
             // 円形のポリゴンを描画する
-
-
             private fun updateLocationText(point: GeoPoint) {
                 "緯度: ${point.latitude} 経度: ${point.longitude}".also { locationTextView.text = it }
             }

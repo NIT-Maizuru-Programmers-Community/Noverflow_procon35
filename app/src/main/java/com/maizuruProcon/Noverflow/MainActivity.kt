@@ -20,6 +20,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import android.graphics.BitmapFactory
 import getMapFieldValueSum
+import updateFieldDataWithOption
 
 class MainActivity : AppCompatActivity() {
 
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        var total: Int? = 0
+        var total: Int?
 
         getMapFieldValueSum(// ごみを捨てた回数のカウント
             collectionName = "noverflow-apps",  // コレクション名
@@ -177,8 +178,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateQrCode() {// QRコードを更新するメソッド
-        val randomData = QRCodeUtils.generateRandomFourDigitNumber().toString()
-        val qrBitmap = QRCodeUtils.createQrCode(randomData)
+        val randomNumber = QRCodeUtils.generateRandomFourDigitNumber().toString()
+
+        updateFieldDataWithOption(
+            collectionName = "noverflow-apps",
+            documentId = "pixel4a",
+            fieldName = "token",
+            value = randomNumber,
+            updateMode = UpdateMode.SET,
+            onSuccess = {
+                Log.d("Firestore", "Field updated successfully")
+            },
+            onFailure = { exception ->
+                Log.e("Firestore", "Error updating field", exception)
+            }
+        )
+
+        val qrBitmap = QRCodeUtils.createQrCode(randomNumber)
         qrBitmap?.let {
             qrImage.setImageBitmap(it)
         }
