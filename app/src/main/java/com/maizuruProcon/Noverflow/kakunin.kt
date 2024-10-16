@@ -13,18 +13,11 @@ class KakuninActivity : AppCompatActivity() {
         setContentView(R.layout.kakunin)
 
         val backbutton: Button = findViewById(R.id.backbutton)
-        val homebutton: Button = findViewById(R.id.homebutton)
 
         // SecondActivityに戻るボタン
         backbutton.setOnClickListener {
             // Intentを作成してsecondActivityに遷移
             val intent = Intent(this, SecondActivity::class.java)
-            startActivity(intent)
-        }
-
-        // MainActivityに戻るボタン
-        homebutton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
     }

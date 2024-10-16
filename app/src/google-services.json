@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "560387779623",
+    "project_id": "noverflow-maizuru",
+    "storage_bucket": "noverflow-maizuru.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:560387779623:android:5ad2009c7b0f2b477fb202",
+        "android_client_info": {
+          "package_name": "com.maizuruProcon.Noverflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqVr5n2vdyQU1qzLnN8Z5pGcxCw49tQI8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

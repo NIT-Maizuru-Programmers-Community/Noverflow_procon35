@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 class TimerFragment : Fragment() {
     private lateinit var timerText: TextView
     private var countDownTimer: CountDownTimer? = null
-    private val startTimeInMillis: Long = 30 * 60 * 1000 // 30分をミリ秒で設定
+    private val startTimeInMillis: Long = 1 * 60 * 1000 // 30分をミリ秒で設定
     private var callback: TimerCallback? = null
 
     override fun onCreateView(
@@ -42,5 +42,9 @@ class TimerFragment : Fragment() {
                 callback?.onTimerFinished() // タイマー終了時にコールバックを呼び出す
             }
         }.start()
+    }
+    fun stopTimer() {
+        countDownTimer?.cancel()
+        timerText.text = "QRは利用できません" // タイマー停止時のテキスト
     }
 }
