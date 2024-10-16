@@ -69,6 +69,34 @@ class MainActivity : AppCompatActivity() {
         val button: Button = findViewById(R.id.test)
         val resetButton: Button = findViewById(R.id.resetButton)
         val mapButton :Button =findViewById(R.id.mapButton)
+        val clearButton: Button = findViewById(R.id.clearButton)
+
+        //キャンセルボタンの実装
+        clearButton.setOnClickListener {
+            // QRコード更新タイマーを停止
+            handler.removeCallbacksAndMessages(null)
+
+            // TimerFragmentのタイマーを停止
+            timerFragment.stopTimer()
+
+            qrImage.setImageBitmap(null)
+            qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+
+            // SharedPreferencesの状態をリセット
+            with(sharedPref.edit()) {
+                putBoolean("btnStartDisabled", false)
+                putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
+                apply()
+            }
+
+            // ボタンの状態を元に戻す
+            binding.btnStart.apply {
+                setBackgroundResource(R.drawable.design) // 元の背景に戻す
+                textSize = 80f // テキストサイズを設定
+                text = "捨てる" // テキストを「捨てる」に戻す
+                isEnabled = true // ボタンを有効にする
+            }
+        }
 
         qrImage = findViewById(R.id.qr_code_image)
         btnstart = findViewById(R.id.btnStart)
@@ -197,7 +225,7 @@ class MainActivity : AppCompatActivity() {
                     qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
 
                     // SharedPreferencesの状態をリセット
-                    with(sharedPref2.edit()) {
+                    with(sharedPref.edit()) {
                         putBoolean("btnStartDisabled", false)
                         putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
                         apply()
@@ -238,5 +266,13 @@ class MainActivity : AppCompatActivity() {
         qrBitmap?.let {
             qrImage.setImageBitmap(it)
         }
+    }
+
+    //リセットボタン
+    private fun resetApp(){
+        val intent = Intent(this,MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
     }
 }

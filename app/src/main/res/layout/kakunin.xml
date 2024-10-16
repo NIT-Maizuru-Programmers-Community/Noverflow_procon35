@@ -28,12 +28,12 @@
         android:id="@+id/textViewQuotient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="220dp"
-        android:text="ごみの個数が入力されていません\n\n[HOMEに戻る]でHOME画面\n\n[入力を続ける]で入力画面\n\nに戻ります"
+        android:layout_marginTop="304dp"
+        android:text="ごみの個数が入力されていません\n\n　　[入力を続ける]を押すと\n　　入力画面に戻ります"
         android:textSize="25sp"
         android:translationZ="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.542"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,24 +47,8 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.936"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.865" />
-
-    <Button
-        android:id="@+id/homebutton"
-        android:layout_width="161dp"
-        android:layout_height="101dp"
-        android:backgroundTint="@color/buttonColor"
-        android:text="HOMEに戻る"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.064"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.866" />
+        app:layout_constraintVertical_bias="0.814" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
