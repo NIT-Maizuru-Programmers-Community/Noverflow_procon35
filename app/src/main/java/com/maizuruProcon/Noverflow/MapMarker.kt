@@ -11,7 +11,7 @@ class MapMarker(private val mapView: MapView) {
         val marker = Marker(mapView)
         marker.position = point
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        marker.title="情報: $info"
+        marker.title="空き容量: ${info} /500L"
         marker.setOnMarkerClickListener{ maeker, mapView ->
             marker.showInfoWindow()
             true

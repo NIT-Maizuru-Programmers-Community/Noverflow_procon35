@@ -2,49 +2,6 @@ import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.QuerySnapshot
-
-fun getCollectionData(
-    collectionName: String,
-    onSuccess: (QuerySnapshot) -> Unit,
-    onFailure: (Exception) -> Unit
-): ListenerRegistration {
-    val db = FirebaseFirestore.getInstance()
-    return db.collection(collectionName)
-        .addSnapshotListener { snapshots, exception ->
-            if (exception != null) {
-                onFailure(exception)
-                return@addSnapshotListener
-            }
-
-            if (snapshots != null) {
-                onSuccess(snapshots)
-            }
-        }
-}
-
-fun getDocumentData(
-    collectionName: String,
-    documentId: String,
-    onSuccess: (Map<String, Any>?) -> Unit,
-    onFailure: (Exception) -> Unit
-): ListenerRegistration {
-    val db = FirebaseFirestore.getInstance()
-    val documentRef = db.collection(collectionName).document(documentId)
-
-    return documentRef.addSnapshotListener { snapshot, exception ->
-        if (exception != null) {
-            onFailure(exception)
-            return@addSnapshotListener
-        }
-
-        if (snapshot != null && snapshot.exists()) {
-            onSuccess(snapshot.data)
-        } else {
-            onSuccess(null)
-        }
-    }
-}
 
 fun getFieldData(
     collectionName: String,
@@ -148,3 +105,6 @@ fun updateFieldDataWithOption(
         }
     }
 }
+
+
+

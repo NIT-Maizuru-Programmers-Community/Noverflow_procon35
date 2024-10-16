@@ -1,4 +1,5 @@
 package com.maizuruProcon.Noverflow
+
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -8,21 +9,20 @@ import androidx.preference.PreferenceManager
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.Button
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
-
+import com.google.firebase.firestore.FirebaseFirestore
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
-
 class FourActivity : AppCompatActivity(){
     private lateinit var mapView: MapView
-    private lateinit var locationTextView: TextView
+
 
     @SuppressLint("MissingInflatedId")
-    override fun onCreate(savedInstanceState:Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -32,14 +32,13 @@ class FourActivity : AppCompatActivity(){
 
         setContentView(R.layout.activity_four)
 
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         mapView = findViewById(R.id.mapView)
-        //locationTextView = findViewById(R.id.location_text)
         mapView.setMultiTouchControls(true)
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -48,8 +47,8 @@ class FourActivity : AppCompatActivity(){
             setupMap()
         }
 
-        val btnTest :Button = findViewById(R.id.btnTest)
-        //3)戻るボタン(アクティビティの終了)
+        val btnTest: Button = findViewById(R.id.btnTest)
+        // 3) 戻るボタン(アクティビティの終了)
         btnTest.setOnClickListener {
             finish()
         }
@@ -58,35 +57,75 @@ class FourActivity : AppCompatActivity(){
     private fun setupMap() {
         val mapSetupController = MapSetupController(this, mapView)
         mapSetupController.setupMapWithLocation { currentLocation ->
-            val destinations = listOf(
-                GeoPoint(37.41690641728752, -122.08539203847516),
-                GeoPoint(37.41765285373379, -122.07798577331849),
-                GeoPoint(37.41400358236627, -122.09261867553687)
-            )
-            val infos = listOf(380,555,555)
 
-            val nearestDestination = destinations.zip(infos)
-                .filter {it.second <= 500}
-                .minByOrNull { currentLocation.distanceToAsDouble(it.first) }
-                ?.first
+            readAllLatLonFromCollection(
+                onSuccess = { destinations, infos ->
 
-            if(nearestDestination != null) {
-                // 経路を取得して描画
-                val routeFetcher = RouteFetcher()
-                routeFetcher.fetchRoute(currentLocation, nearestDestination) { routePoints ->
-                    val routeController = RouteController(mapView)
-                    routeController.drawRoute(routePoints)
+                    // 取得したdestinationsリストを使って最寄りの場所を検索
+                    val nearestDestination = destinations.zip(infos)
+                        .filter { it.second <= 500 }
+                        .minByOrNull { currentLocation.distanceToAsDouble(it.first) }
+                        ?.first
+
+                    if (nearestDestination != null) {
+                        // 経路を取得して描画
+                        val routeFetcher = RouteFetcher()
+                        routeFetcher.fetchRoute(currentLocation, nearestDestination) { routePoints ->
+                            val routeController = RouteController(mapView)
+                            routeController.drawRoute(routePoints)
+                        }
+                    }
+
+                    // 取得した緯度経度にマーカーを配置
+                    val mapMarker = MapMarker(mapView)
+                    destinations.forEachIndexed { index, destination ->
+                        mapMarker.placeMarker(destination.latitude, destination.longitude, infos[index])
+                    }
+                },
+                onFailure = { exception ->
+                    Log.e("Firestore", "Error fetching lat/lon: ", exception)
                 }
-            }
-            // 目的地にマーカーを配置
-            /*val mapMarkerController = MapMarker(mapView)
-            mapMarkerController.placeMarker(destination.latitude, destination.longitude)*/
-            val mapMarker = MapMarker(mapView)
-            destinations.forEachIndexed{index,destination ->
-                mapMarker.placeMarker(destination.latitude,destination.longitude,infos[index])
-            }
+            )
         }
     }
+
+    private fun readAllLatLonFromCollection(onSuccess: (List<GeoPoint>, List<Int>) -> Unit, onFailure: (Exception) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection("garbageBoxes")  // コレクション名を指定
+
+        collectionRef.get()
+            .addOnSuccessListener { result ->
+                val geoPoints = mutableListOf<GeoPoint>()
+                val infos = mutableListOf<Int>()
+
+                for (document in result) {
+                    val latitude = document.getDouble("location.latitude")
+                    val longitude = document.getDouble("location.longitude")
+
+                    // trashフィールドを取得し、型をチェックする
+                    val trashValue: Any? = document.get("trash") // Any型で取得
+
+                    val trashInt = when (trashValue) {
+                        is Number -> trashValue.toInt()  // Number型の場合
+                        is String -> trashValue.toIntOrNull() ?: 0 // String型であれば変換（失敗時は0）
+                        else -> 0  // その他の場合は0を設定
+                    }
+
+                    if (latitude != null && longitude != null) {
+                        geoPoints.add(GeoPoint(latitude, longitude))
+                        infos.add(trashInt)  // infoリストに追加
+                    }
+                }
+
+                onSuccess(geoPoints, infos)
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+
+
+    }
+
     override fun onResume() {
         super.onResume()
         mapView.onResume()
