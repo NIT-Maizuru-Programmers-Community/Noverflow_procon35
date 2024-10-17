@@ -3,43 +3,39 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 
 object FirestoreUtils {
-    private lateinit var listenerRegistration: ListenerRegistration
+    private var listenerRegistration: ListenerRegistration? = null
 
     // フラグの変更を監視するためのリスナーを設定
     fun listenToFlagChanges(onFlagChanged: (Boolean, String) -> Unit) {
         val db = FirebaseFirestore.getInstance()
-        val collectionRef = db.collection("garbageBoxes")  // コレクション名を指定
+        val collectionRef = db.collection("garbageBoxes")
 
-        // リアルタイムリスナーを設定
         listenerRegistration = collectionRef.addSnapshotListener { snapshots, e ->
             if (e != null) {
-                Log.e("firestore", "Error fetching documents: ", e)
+                Log.e("Firestore", "Error fetching documents: ", e)
                 return@addSnapshotListener
             }
 
             if (snapshots != null && !snapshots.isEmpty) {
                 for (document in snapshots.documents) {
-                    if (document.exists()) {
-                        val flag = document.getBoolean("flag") ?: false  // デフォルトはfalse
-                        val documentId = document.id  // ドキュメントIDを取得
+                    val flag = document.getBoolean("flag") ?: false
+                    val documentId = document.id
+                    Log.d("Firestore", "Document ID: $documentId, Flag: $flag")
 
-                        // ログにドキュメントIDとflagの値を出力
-                        Log.d("firestore", "Document ID: $documentId, Flag: $flag")
-
-                        // flagがtrueに変更された場合の処理
-                        if (flag) {
-                            Log.d("firestore", "Flag is true for Document ID: $documentId")
-                            onFlagChanged(flag, documentId) // 引数の順序を修正
-                        }
+                    // フラグが true の場合にコールバックを実行
+                    if (flag) {
+                        onFlagChanged(flag, documentId)
                     }
                 }
             } else {
-                Log.d("firestore", "No documents in the collection")
+                Log.d("Firestore", "No documents found in the collection")
             }
         }
     }
 
+    // リスナーを停止するメソッド
     fun stopListeningToFlagChanges() {
-        listenerRegistration.remove()
+        listenerRegistration?.remove()
+        listenerRegistration = null
     }
 }

@@ -33,16 +33,8 @@ class SecondActivity : AppCompatActivity() {
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
-
-        // ViewModelの初期化
         garbageViewModel = ViewModelProvider(this).get(GarbageViewModel::class.java)
 
-        FirestoreUtils.listenToFlagChanges { flag, documentId ->  // 順序を修正
-            if (flag) {
-                Log.d("firestore", "Flag is true for Document ID: $documentId")
-                onFlagChanged(flag, documentId) // ここは変更なし
-            }
-        }
 
         val btnStart1: Button = findViewById(R.id.btnStart1) // ボタンの取得
         btnStart1.setOnClickListener { // ボタンを押したら次の画面へ
@@ -60,8 +52,7 @@ class SecondActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        // リスナーを解除する処理を追加
-        garbageViewModel.counts.removeObservers(this)
+        garbageViewModel.counts.removeObservers(this) // ViewModelのオブザーバーも解除
     }
 
     private fun setupCountButtons() {
@@ -138,18 +129,11 @@ class SecondActivity : AppCompatActivity() {
             )
             garbageViewModel.updateCounts(selectedCounts)
 
-
             val qrCode = createQrCode(randomNumber)// QRコードを生成
 
             val intent = Intent(this, MainActivity::class.java)// QRコードをBitmapとしてIntentに渡す
             intent.putExtra("QR_CODE", qrCode)
             startActivity(intent)
         }
-    }
-
-    private fun onFlagChanged(flag: Boolean, documentId: String) {
-        // フラグが変更されたときの処理をここに記述します
-        Log.d("FlagChanged", "Flag: $flag, Document ID: $documentId")
-        // 追加の処理を実装してください
     }
 }

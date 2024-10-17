@@ -45,16 +45,12 @@ class GarbageViewModel : ViewModel() {
         }
     }
 
-    // ViewModelからデータを取得し、ログに出力する
-    fun getCountsFromViewModel(
-        viewModel: GarbageViewModel,
-        onCountsRetrieved: (Map<String, Int>) -> Unit
-    ) {
-        viewModel.counts.observeForever { countsMap ->
-            countsMap?.let {
-                Log.d("GarbageViewModel", "Retrieved counts: $it")
-                onCountsRetrieved(it)
-            }
-        }
+
+    fun getCurrentCounts(): Map<String, Int> {
+        return _counts.value ?: emptyMap() // nullの可能性がないならそのまま返す
+    }
+
+    fun getCountByKey(key: String): Int {
+        return getCurrentCounts()[key] ?: 0 // キーが存在しない場合は0を返す
     }
 }

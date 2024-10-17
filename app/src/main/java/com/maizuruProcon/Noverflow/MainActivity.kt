@@ -20,6 +20,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import android.graphics.BitmapFactory
 import androidx.activity.viewModels
+import com.google.firebase.firestore.FirebaseFirestore
 import getMapFieldValueSum
 import updateFieldDataWithOption
 
@@ -138,6 +139,26 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        listenerRegistration = FirebaseFirestore.getInstance()
+            .collection("garbageBoxes") // コレクション名を指定
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w("Firestore", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    for (document in snapshot.documents) {
+                        val flag = document.getBoolean("flag") ?: false
+                        if (flag) {
+                            // flagがtrueの場合、ViewMapのキーと値を取得
+                            val viewMap = document.data // 全てのフィールドを取得
+                            Log.d("Firestore", "ViewMap: $viewMap")
+                        }
+                    }
+                }
+            }
+
         val byteArray = intent.getByteArrayExtra("QR_CODE")// IntentからQRコードのバイト配列を取得
 
         byteArray?.let {// バイト配列が存在する場合、BitmapにデコードしてImageViewに設定
@@ -186,6 +207,11 @@ class MainActivity : AppCompatActivity() {
             1 -> imageButton.setImageResource(R.drawable.count2)  // 数字が1の時の画像
             2 -> imageButton.setImageResource(R.drawable.count3)  // 数字が2の時の画像
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        FirestoreUtils.stopListeningToFlagChanges() // リスナーを停止
     }
 
     private fun stopQrUpdateTimer() {// タイマーを停止するメソッド
