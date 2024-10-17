@@ -26,7 +26,7 @@ class account: AppCompatActivity()  {
             finish()// 現在のアクティビティを終了して前の画面に戻る
         }
 
-        var total: Int?
+        var total: Int? = null
         getMapFieldValueSum(// ごみを捨てた回数のカウント
             collectionName = "noverflow-apps",  // コレクション名
             documentId = "pixel4a",    // ドキュメントID
@@ -45,6 +45,9 @@ class account: AppCompatActivity()  {
 
                 val total_text: TextView = findViewById(R.id.all_total)//合計の表示
                 total_text.text = "合計${total}個"
+
+                setBackgroundVisibility(total!!)
+
             } ?: run {
                 Log.e("Firestore", "合計値の取得に失敗しました")
             }
@@ -100,6 +103,9 @@ class account: AppCompatActivity()  {
         }
 
 
+    }
+
+    private fun setBackgroundVisibility(total: Int) {
 
         //背景の制御
         // ImageViewの取得
@@ -118,268 +124,297 @@ class account: AppCompatActivity()  {
         val back13: ImageView = findViewById(R.id.back13)
         val back14: ImageView = findViewById(R.id.back14)
         val back15: ImageView = findViewById(R.id.back15)
+        when {
+            total < 10 -> {
+                back1.visibility = View.GONE // 非表示
+                back2.visibility = View.GONE // 非表示
+                back3.visibility = View.GONE // 非表示
+                back4.visibility = View.GONE // 非表示
+                back5.visibility = View.GONE // 非表示
+                back6.visibility = View.GONE // 非表示
+                back7.visibility = View.GONE // 非表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
 
-        //背景の設定
-        if (Singleton.total <10){
-            back1.visibility = View.GONE // 非表示
-            back2.visibility = View.GONE // 非表示
-            back3.visibility = View.GONE // 非表示
-            back4.visibility = View.GONE // 非表示
-            back5.visibility = View.GONE // 非表示
-            back6.visibility = View.GONE // 非表示
-            back7.visibility = View.GONE // 非表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        } else if (10<= Singleton.total && Singleton.total < 20) {
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.GONE // 非表示
-            back3.visibility = View.GONE // 非表示
-            back4.visibility = View.GONE // 非表示
-            back5.visibility = View.GONE // 非表示
-            back6.visibility = View.GONE // 非表示
-            back7.visibility = View.GONE // 非表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        } else if(20<= Singleton.total && Singleton.total < 30){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.GONE // 非表示
-            back4.visibility = View.GONE // 非表示
-            back5.visibility = View.GONE // 非表示
-            back6.visibility = View.GONE // 非表示
-            back7.visibility = View.GONE // 非表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(30<= Singleton.total && Singleton.total < 40){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.GONE // 非表示
-            back5.visibility = View.GONE // 非表示
-            back6.visibility = View.GONE // 非表示
-            back7.visibility = View.GONE // 非表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(40<= Singleton.total && Singleton.total < 50){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.GONE // 非表示
-            back6.visibility = View.GONE // 非表示
-            back7.visibility = View.GONE // 非表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(50<= Singleton.total && Singleton.total < 60){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.GONE // 非表示
-            back7.visibility = View.GONE // 非表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(60<= Singleton.total && Singleton.total < 70){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.GONE // 非表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(70<= Singleton.total && Singleton.total < 80){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.GONE // 非表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(80<= Singleton.total && Singleton.total < 90){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.GONE // 非表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(90<= Singleton.total && Singleton.total < 100){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.VISIBLE // 表示
-            back10.visibility = View.GONE // 非表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(100<= Singleton.total && Singleton.total < 110){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.VISIBLE // 表示
-            back10.visibility = View.VISIBLE // 表示
-            back11.visibility = View.GONE // 非表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(110<= Singleton.total && Singleton.total < 120){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.VISIBLE // 表示
-            back10.visibility = View.VISIBLE // 表示
-            back11.visibility = View.VISIBLE // 表示
-            back12.visibility = View.GONE // 非表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(120<= Singleton.total && Singleton.total < 130){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.VISIBLE // 表示
-            back10.visibility = View.VISIBLE // 表示
-            back11.visibility = View.VISIBLE // 表示
-            back12.visibility = View.VISIBLE // 表示
-            back13.visibility = View.GONE // 非表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(130<= Singleton.total && Singleton.total < 140){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.VISIBLE // 表示
-            back10.visibility = View.VISIBLE // 表示
-            back11.visibility = View.VISIBLE // 表示
-            back12.visibility = View.VISIBLE // 表示
-            back13.visibility = View.VISIBLE // 表示
-            back14.visibility = View.GONE // 非表示
-            back15.visibility = View.GONE // 非表示
-        }else if(150<= Singleton.total){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.VISIBLE // 表示
-            back10.visibility = View.VISIBLE // 表示
-            back11.visibility = View.VISIBLE // 表示
-            back12.visibility = View.VISIBLE // 表示
-            back13.visibility = View.VISIBLE // 表示
-            back14.visibility = View.VISIBLE // 表示
-            back15.visibility = View.GONE // 非表示
-        }else if(Singleton.total >= 150){
-            back1.visibility = View.VISIBLE // 表示
-            back2.visibility = View.VISIBLE // 表示
-            back3.visibility = View.VISIBLE // 表示
-            back4.visibility = View.VISIBLE // 表示
-            back5.visibility = View.VISIBLE // 表示
-            back6.visibility = View.VISIBLE // 表示
-            back7.visibility = View.VISIBLE // 表示
-            back8.visibility = View.VISIBLE // 表示
-            back9.visibility = View.VISIBLE // 表示
-            back10.visibility = View.VISIBLE // 表示
-            back11.visibility = View.VISIBLE // 表示
-            back12.visibility = View.VISIBLE // 表示
-            back13.visibility = View.VISIBLE // 表示
-            back14.visibility = View.VISIBLE // 表示
-            back15.visibility = View.VISIBLE // 表示
+            total in 10..19 -> {
+                back1.visibility = View.VISIBLE
+                back2.visibility = View.GONE // 非表示
+                back3.visibility = View.GONE // 非表示
+                back4.visibility = View.GONE // 非表示
+                back5.visibility = View.GONE // 非表示
+                back6.visibility = View.GONE // 非表示
+                back7.visibility = View.GONE // 非表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 20..29 -> {
+                back1.visibility = View.VISIBLE
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.GONE // 非表示
+                back4.visibility = View.GONE // 非表示
+                back5.visibility = View.GONE // 非表示
+                back6.visibility = View.GONE // 非表示
+                back7.visibility = View.GONE // 非表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 30..39 -> {
+                back1.visibility = View.VISIBLE //表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.GONE // 非表示
+                back5.visibility = View.GONE // 非表示
+                back6.visibility = View.GONE // 非表示
+                back7.visibility = View.GONE // 非表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 40..49 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.GONE // 非表示
+                back6.visibility = View.GONE // 非表示
+                back7.visibility = View.GONE // 非表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 50..59 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.GONE // 非表示
+                back7.visibility = View.GONE // 非表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 60..69 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.GONE // 非表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 70..79 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.GONE // 非表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 80..89 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 90..99 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.GONE // 非表示
+                back10.visibility = View.GONE // 非表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 100..109 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.VISIBLE // 表示
+                back10.visibility = View.VISIBLE // 表示
+                back11.visibility = View.GONE // 非表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 110..119 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.VISIBLE // 表示
+                back10.visibility = View.VISIBLE // 表示
+                back11.visibility = View.VISIBLE // 表示
+                back12.visibility = View.GONE // 非表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 120..129 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.VISIBLE // 表示
+                back10.visibility = View.VISIBLE // 表示
+                back11.visibility = View.VISIBLE // 表示
+                back12.visibility = View.VISIBLE // 表示
+                back13.visibility = View.GONE // 非表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 130..139 -> {
+
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.VISIBLE // 表示
+                back10.visibility = View.VISIBLE // 表示
+                back11.visibility = View.VISIBLE // 表示
+                back12.visibility = View.VISIBLE // 表示
+                back13.visibility = View.VISIBLE // 表示
+                back14.visibility = View.GONE // 非表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total in 140..149 -> {
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.VISIBLE // 表示
+                back10.visibility = View.VISIBLE // 表示
+                back11.visibility = View.VISIBLE // 表示
+                back12.visibility = View.VISIBLE // 表示
+                back13.visibility = View.VISIBLE // 表示
+                back14.visibility = View.VISIBLE // 表示
+                back15.visibility = View.GONE // 非表示
+            }
+
+            total >= 150 -> {
+                back1.visibility = View.VISIBLE // 表示
+                back2.visibility = View.VISIBLE // 表示
+                back3.visibility = View.VISIBLE // 表示
+                back4.visibility = View.VISIBLE // 表示
+                back5.visibility = View.VISIBLE // 表示
+                back6.visibility = View.VISIBLE // 表示
+                back7.visibility = View.VISIBLE // 表示
+                back8.visibility = View.VISIBLE // 表示
+                back9.visibility = View.VISIBLE // 表示
+                back10.visibility = View.VISIBLE // 表示
+                back11.visibility = View.VISIBLE // 表示
+                back12.visibility = View.VISIBLE // 表示
+                back13.visibility = View.VISIBLE // 表示
+                back14.visibility = View.VISIBLE // 表示
+                back15.visibility = View.VISIBLE // 表示
+            }
         }
-
-
     }
+
     private fun updateImage(remainder: Int?, imageView: ImageView) {// 画像を更新する関数
         when (remainder) {
             0, 3 -> imageView.setImageResource(R.drawable.count1)  // 数字が0,3の時の画像
@@ -387,4 +422,7 @@ class account: AppCompatActivity()  {
             2 -> imageView.setImageResource(R.drawable.count3)  // 数字が2の時の画像
         }
     }
+
+
+
 }
