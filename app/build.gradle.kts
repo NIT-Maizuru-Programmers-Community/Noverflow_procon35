@@ -95,4 +95,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
     implementation("com.google.firebase:firebase-firestore")
+
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6")
 }

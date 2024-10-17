@@ -20,9 +20,11 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import android.graphics.BitmapFactory
 import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import getMapFieldValueSum
 import updateFieldDataWithOption
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,13 +35,15 @@ class MainActivity : AppCompatActivity() {
     private val updateInterval: Long = 5*60*1000 // 5分
     private lateinit var timerFragment: TimerFragment
     private lateinit var listenerRegistration: ListenerRegistration
-    private val garbageViewModel: GarbageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
+
+        initializeCounts()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -47,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // アプリ起動時にボタンの初期状態を設定
@@ -101,7 +104,19 @@ class MainActivity : AppCompatActivity() {
                 isEnabled = true
             }
 
-            garbageViewModel.resetCounts() // ViewModelの値をリセット
+            val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+            with(countsPref.edit()) {
+                putInt("burningGarbage", 0)
+                putInt("plasticGarbage", 0)
+                putInt("bottles", 0)
+                putInt("cans", 0)
+                apply()
+            }
+            val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
+            val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
+            val retrievedBottles = countsPref.getInt("bottles", -1)
+            val retrievedCans = countsPref.getInt("cans", -1)
+            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
         }
 
         qrImage = findViewById(R.id.qr_code_image)
@@ -139,6 +154,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+
         listenerRegistration = FirebaseFirestore.getInstance()
             .collection("garbageBoxes") // コレクション名を指定
             .addSnapshotListener { snapshot, e ->
@@ -151,13 +167,19 @@ class MainActivity : AppCompatActivity() {
                     for (document in snapshot.documents) {
                         val flag = document.getBoolean("flag") ?: false
                         if (flag) {
-                            // flagがtrueの場合、ViewMapのキーと値を取得
-                            val viewMap = document.data // 全てのフィールドを取得
-                            Log.d("Firestore", "ViewMap: $viewMap")
+
                         }
                     }
                 }
             }
+
+        val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+        val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
+        val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
+        val retrievedBottles = countsPref.getInt("bottles", -1)
+        val retrievedCans = countsPref.getInt("cans", -1)
+
+        Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
 
         val byteArray = intent.getByteArrayExtra("QR_CODE")// IntentからQRコードのバイト配列を取得
 
@@ -209,6 +231,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+        with(countsPref.edit()) {
+            putInt("burningGarbage", 0)
+            putInt("plasticGarbage", 0)
+            putInt("bottles", 0)
+            putInt("cans", 0)
+            apply()
+        }
+    }
     override fun onDestroy() {
         super.onDestroy()
         FirestoreUtils.stopListeningToFlagChanges() // リスナーを停止
@@ -247,6 +280,23 @@ class MainActivity : AppCompatActivity() {
         val qrBitmap = QRCodeUtils.createQrCode(randomNumber)
         qrBitmap?.let {
             qrImage.setImageBitmap(it)
+        }
+    }
+
+    private fun initializeCounts() {
+        val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+
+        // 初期値を設定する条件を指定（ここでは例として、デフォルト値が設定されているかどうかをチェック）
+        if (countsPref.getInt("burningGarbage", -1) == -1) {
+            // 初期値を保存
+            with(countsPref.edit()) {
+                putInt("burningGarbage", 0)
+                putInt("plasticGarbage", 0)
+                putInt("bottles", 0)
+                putInt("cans", 0)
+                apply()
+            }
+            Log.d("CountsData", "Initialized CountsData with zeros.")
         }
     }
 }

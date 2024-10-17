@@ -12,11 +12,9 @@ import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import com.maizuruProcon.Noverflow.QRCodeUtils.generateRandomFourDigitNumber
-import com.maizuruProcon.Noverflow.GarbageViewModel
 import com.maizuruProcon.Noverflow.QRCodeUtils.createQrCode
 import updateFieldDataWithOption
 
@@ -25,7 +23,7 @@ class SecondActivity : AppCompatActivity() {
     private val counts = IntArray(4) // 各ゴミのカウントを格納する配列
     private lateinit var binding: ActivitySecondBinding
     private lateinit var listenerRegistration: ListenerRegistration
-    private lateinit var garbageViewModel: GarbageViewModel
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +31,6 @@ class SecondActivity : AppCompatActivity() {
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
-        garbageViewModel = ViewModelProvider(this).get(GarbageViewModel::class.java)
 
 
         val btnStart1: Button = findViewById(R.id.btnStart1) // ボタンの取得
@@ -48,11 +45,6 @@ class SecondActivity : AppCompatActivity() {
         btnBack.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        garbageViewModel.counts.removeObservers(this) // ViewModelのオブザーバーも解除
     }
 
     private fun setupCountButtons() {
@@ -121,13 +113,14 @@ class SecondActivity : AppCompatActivity() {
                 }
             )
 
-            val selectedCounts = mapOf(
-                "burningGarbage" to counts[0],
-                "plasticGarbage" to counts[1],
-                "bottles" to counts[2],
-                "cans" to counts[3]
-            )
-            garbageViewModel.updateCounts(selectedCounts)
+            val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+            with(countsPref.edit()) {
+                putInt("burningGarbage", counts[0])
+                putInt("plasticGarbage", counts[1])
+                putInt("bottles", counts[2])
+                putInt("cans", counts[3])
+                apply()
+            }
 
             val qrCode = createQrCode(randomNumber)// QRコードを生成
 
