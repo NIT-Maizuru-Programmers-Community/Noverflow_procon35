@@ -154,7 +154,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         listenerRegistration = FirebaseFirestore.getInstance()
             .collection("garbageBoxes") // コレクション名を指定
             .addSnapshotListener { snapshot, e ->
@@ -167,19 +166,49 @@ class MainActivity : AppCompatActivity() {
                     for (document in snapshot.documents) {
                         val flag = document.getBoolean("flag") ?: false
                         if (flag) {
+                            val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+                            val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
+                            val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
+                            val retrievedBottles = countsPref.getInt("bottles", -1)
+                            val retrievedCans = countsPref.getInt("cans", -1)
 
+                            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
+
+                            // Firestoreにアップロード
+                            updateCountsInFirestore(retrievedBurningGarbage, retrievedPlasticGarbage, retrievedBottles, retrievedCans)
+
+                            handler.removeCallbacksAndMessages(null)
+                            timerFragment.stopTimer()
+                            qrImage.setImageBitmap(null)
+                            qrImage.setBackgroundResource(R.drawable.qr_code_border)
+
+                            with(sharedPref.edit()) {
+                                putBoolean("btnStartDisabled", false)
+                                putString("btnStartText", "捨てる")
+                                apply()
+                            }
+
+                            binding.btnStart.apply {
+                                setBackgroundResource(R.drawable.design)
+                                textSize = 80f
+                                text = "捨てる"
+                                isEnabled = true
+                            }
+
+                            with(countsPref.edit()) {
+                                putInt("burningGarbage", 0)
+                                putInt("plasticGarbage", 0)
+                                putInt("bottles", 0)
+                                putInt("cans", 0)
+                                apply()
+                            }
+                            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
+
+                            updateAllFlagsToFalse()
                         }
                     }
                 }
             }
-
-        val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
-        val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
-        val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
-        val retrievedBottles = countsPref.getInt("bottles", -1)
-        val retrievedCans = countsPref.getInt("cans", -1)
-
-        Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
 
         val byteArray = intent.getByteArrayExtra("QR_CODE")// IntentからQRコードのバイト配列を取得
 
@@ -298,5 +327,51 @@ class MainActivity : AppCompatActivity() {
             }
             Log.d("CountsData", "Initialized CountsData with zeros.")
         }
+    }
+    private fun updateCountsInFirestore(burningGarbage: Int, plasticGarbage: Int, bottles: Int, cans: Int) {
+        val db = FirebaseFirestore.getInstance()
+        val data = hashMapOf(
+            "burningGarbage" to burningGarbage,
+            "plasticGarbage" to plasticGarbage,
+            "bottles" to bottles,
+            "cans" to cans
+        )
+
+        for ((key, value) in data) {
+            updateFieldDataWithOption(
+                collectionName = "noverflow-apps",
+                documentId = "pixel4a",
+                fieldName = "garbages.$key",  // フィールド名を "garbages.<key>" に
+                value = value,                // 値を更新
+                updateMode = UpdateMode.INCREMENT,
+                onSuccess = {
+                    Log.d("Firestore", "$key updated successfully with value $value")
+                },
+                onFailure = { exception ->
+                    Log.e("Firestore", "Error updating $key", exception)
+                }
+            )
+        }
+    }
+    private fun updateAllFlagsToFalse() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("garbageBoxes") // 対象のコレクション名を指定
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val docId = document.id
+                    db.collection("garbageBoxes").document(docId)
+                        .update("flag", false)
+                        .addOnSuccessListener {
+                            Log.d("Firestore", "Document $docId successfully updated with flag=false")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Firestore", "Error updating document $docId", e)
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error getting documents", e)
+            }
     }
 }

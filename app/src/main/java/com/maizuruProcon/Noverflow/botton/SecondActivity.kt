@@ -22,8 +22,6 @@ class SecondActivity : AppCompatActivity() {
 
     private val counts = IntArray(4) // 各ゴミのカウントを格納する配列
     private lateinit var binding: ActivitySecondBinding
-    private lateinit var listenerRegistration: ListenerRegistration
-
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,7 +85,7 @@ class SecondActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             putBoolean("btnStartDisabled", true)
-            putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
+            putString("btnStartText", "利用不可")
             apply()
         }
 
@@ -121,6 +119,13 @@ class SecondActivity : AppCompatActivity() {
                 putInt("cans", counts[3])
                 apply()
             }
+
+            val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
+            val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
+            val retrievedBottles = countsPref.getInt("bottles", -1)
+            val retrievedCans = countsPref.getInt("cans", -1)
+
+            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
 
             val qrCode = createQrCode(randomNumber)// QRコードを生成
 
