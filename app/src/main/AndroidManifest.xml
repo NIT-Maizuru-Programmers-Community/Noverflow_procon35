@@ -59,6 +59,9 @@
             android:label="FourActivity"
             android:theme="@style/Theme.Noverflow"/>
 
+        <activity
+            android:name=".ResetActivity" />
+
     </application>
 
 

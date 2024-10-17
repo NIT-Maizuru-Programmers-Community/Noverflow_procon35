@@ -18,7 +18,6 @@ class MapTapController(private val mapView: MapView, private val locationTextVie
                     clearMarkers()
                     placeMarker(p)
                     clearPolygon()
-                    //placePolygon(p)
                     updateLocationText(p)
                 }
                 return true

@@ -2,7 +2,6 @@ package com.maizuruProcon.Noverflow.botton
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -13,15 +12,12 @@ import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.common.BitMatrix
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.maizuruProcon.Noverflow.QRCodeUtils.generateRandomFourDigitNumber
+import com.maizuruProcon.Noverflow.GarbageViewModel
+import com.maizuruProcon.Noverflow.QRCodeUtils.createQrCode
 import updateFieldDataWithOption
 
 class SecondActivity : AppCompatActivity() {
@@ -29,6 +25,8 @@ class SecondActivity : AppCompatActivity() {
     private val counts = IntArray(4) // 各ゴミのカウントを格納する配列
     private lateinit var binding: ActivitySecondBinding
     private lateinit var listenerRegistration: ListenerRegistration
+    private lateinit var garbageViewModel: GarbageViewModel
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,27 +34,34 @@ class SecondActivity : AppCompatActivity() {
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
 
-        val btnStart1: Button = findViewById(R.id.btnStart1)// ボタンの取得
-        btnStart1.setOnClickListener {// ボタンを押したら次の画面へ
+        // ViewModelの初期化
+        garbageViewModel = ViewModelProvider(this).get(GarbageViewModel::class.java)
 
-            // ボタンの状態をSharedPreferencesに保存
-            val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
-            with(sharedPref.edit()) {
-                putBoolean("btnStartDisabled", true)
-                putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
-                apply()
+        FirestoreUtils.listenToFlagChanges { flag, documentId ->  // 順序を修正
+            if (flag) {
+                Log.d("firestore", "Flag is true for Document ID: $documentId")
+                onFlagChanged(flag, documentId) // ここは変更なし
             }
+        }
+
+        val btnStart1: Button = findViewById(R.id.btnStart1) // ボタンの取得
+        btnStart1.setOnClickListener { // ボタンを押したら次の画面へ
             handleStartButtonClick(btnStart1)
         }
 
-        // 各ゴミカウントのボタン設定
-        setupCountButtons()
+        setupCountButtons()// 各ゴミカウントのボタン設定
 
         // 戻るボタン
         val btnBack: Button = findViewById(R.id.btnBack)
         btnBack.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // リスナーを解除する処理を追加
+        garbageViewModel.counts.removeObservers(this)
     }
 
     private fun setupCountButtons() {
@@ -124,66 +129,27 @@ class SecondActivity : AppCompatActivity() {
                     Log.e("Firestore", "Error updating field", exception)
                 }
             )
-            val data = mapOf(
+
+            val selectedCounts = mapOf(
                 "burningGarbage" to counts[0],
                 "plasticGarbage" to counts[1],
                 "bottles" to counts[2],
                 "cans" to counts[3]
             )
-
-            for ((key, value) in data) {
-                updateFieldDataWithOption(
-                    collectionName = "noverflow-apps",
-                    documentId = "pixel4a",
-                    fieldName = "garbages.$key",  // フィールド名を "garbages.<key>" に
-                    value = value,                // 値を更新
-                    updateMode = UpdateMode.INCREMENT,
-                    onSuccess = {
-                        Log.d("Firestore", "$key updated successfully with value $value")
-                    },
-                    onFailure = { exception ->
-                        Log.e("Firestore", "Error updating $key", exception)
-                    }
-                )
-            }
+            garbageViewModel.updateCounts(selectedCounts)
 
 
             val qrCode = createQrCode(randomNumber)// QRコードを生成
 
-            // QRコードをBitmapとしてIntentに渡す
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)// QRコードをBitmapとしてIntentに渡す
             intent.putExtra("QR_CODE", qrCode)
             startActivity(intent)
         }
     }
 
-    private fun createBitMatrix(data: String): BitMatrix? {
-        val multiFormatWriter = MultiFormatWriter()
-        val hints = mapOf(
-            EncodeHintType.MARGIN to 0,
-            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-        )
-
-        return multiFormatWriter.encode(
-            data,
-            BarcodeFormat.QR_CODE,
-            170,
-            200,
-            hints
-        )
-    }
-
-    private fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-        val barcodeEncoder = BarcodeEncoder()
-        return barcodeEncoder.createBitmap(bitMatrix)
-    }
-
-    private fun createQrCode(data: String): Bitmap? {
-        return try {
-            val bitMatrix = createBitMatrix(data)
-            bitMatrix?.let { createBitmap(it) }
-        } catch (e: Exception) {
-            null
-        }
+    private fun onFlagChanged(flag: Boolean, documentId: String) {
+        // フラグが変更されたときの処理をここに記述します
+        Log.d("FlagChanged", "Flag: $flag, Document ID: $documentId")
+        // 追加の処理を実装してください
     }
 }

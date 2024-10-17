@@ -19,6 +19,7 @@ import com.maizuruProcon.Noverflow.databinding.ActivityMainBinding
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import android.graphics.BitmapFactory
+import androidx.activity.viewModels
 import getMapFieldValueSum
 import updateFieldDataWithOption
 
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val updateInterval: Long = 5*60*1000 // 5分
     private lateinit var timerFragment: TimerFragment
     private lateinit var listenerRegistration: ListenerRegistration
+    private val garbageViewModel: GarbageViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,31 +79,28 @@ class MainActivity : AppCompatActivity() {
         val mapButton :Button =findViewById(R.id.mapButton)
         val clearButton: Button = findViewById(R.id.clearButton)
 
-        //キャンセルボタンの実装
-        clearButton.setOnClickListener {
-            // QRコード更新タイマーを停止
+
+        binding.clearButton.setOnClickListener {
             handler.removeCallbacksAndMessages(null)
-
-            // TimerFragmentのタイマーを停止
             timerFragment.stopTimer()
-
             qrImage.setImageBitmap(null)
-            qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+            qrImage.setBackgroundResource(R.drawable.qr_code_border)
 
-            // SharedPreferencesの状態をリセット
+            val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
                 putBoolean("btnStartDisabled", false)
-                putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
+                putString("btnStartText", "捨てる")
                 apply()
             }
 
-            // ボタンの状態を元に戻す
             binding.btnStart.apply {
-                setBackgroundResource(R.drawable.design) // 元の背景に戻す
-                textSize = 80f // テキストサイズを設定
-                text = "捨てる" // テキストを「捨てる」に戻す
-                isEnabled = true // ボタンを有効にする
+                setBackgroundResource(R.drawable.design)
+                textSize = 80f
+                text = "捨てる"
+                isEnabled = true
             }
+
+            garbageViewModel.resetCounts() // ViewModelの値をリセット
         }
 
         qrImage = findViewById(R.id.qr_code_image)
@@ -109,18 +108,15 @@ class MainActivity : AppCompatActivity() {
 
         // ボタンが押された時の処理(画面遷移)
         btnstart.setOnClickListener {
-            // Intentを作成してsecondActivityに遷移
-            val intent = Intent(this, SecondActivity::class.java)
+            val intent = Intent(this, SecondActivity::class.java)// Intentを作成してsecondActivityに遷移
             startActivity(intent)
         }
         imageButton.setOnClickListener {
-            // Intentを作成してaccountActivityに遷移
-            val intent = Intent(this, account::class.java)
+            val intent = Intent(this, account::class.java)// Intentを作成してaccountActivityに遷移
             startActivity(intent)
         }
         mapButton.setOnClickListener{
-            // Intentを作成してfourActivityに遷移
-            val intent= Intent(this, FourActivity::class.java)
+            val intent= Intent(this, FourActivity::class.java)// Intentを作成してfourActivityに遷移
             startActivity(intent)
         }
 
