@@ -30,7 +30,6 @@ class SecondActivity : AppCompatActivity() {
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
 
-
         val btnStart1: Button = findViewById(R.id.btnStart1) // ボタンの取得
         btnStart1.setOnClickListener { // ボタンを押したら次の画面へ
             handleStartButtonClick(btnStart1)
