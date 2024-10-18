@@ -5,6 +5,7 @@
         <item name="android:padding">?attr/appWidgetPadding</item>
         <item name="android:background">@drawable/app_widget_background</item>
         <item name="android:clipToOutline">true</item>
+        <item name="colorPrimary">@color/black</item>
     </style>
 
     <style name="Widget.Noverflow.AppWidget.InnerView" parent="android:Widget">

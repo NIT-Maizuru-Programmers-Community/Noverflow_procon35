@@ -7,7 +7,7 @@
 
     <style name="Theme.Noverflow" parent="Base.Theme.Noverflow" />
 
-    <style name="Theme.Noverflow.AppWidgetContainerParent" parent="@android:style/Theme.DeviceDefault">
+    <style name="Theme.Noverflow.AppWidgetContainerParent" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Radius of the outer bound of widgets to make the rounded corners -->
         <item name="appWidgetRadius">16dp</item>
         <!--
@@ -17,7 +17,7 @@
         <item name="appWidgetInnerRadius">8dp</item>
     </style>
 
-    <style name="Theme.Noverflow.AppWidgetContainer" parent="Theme.Noverflow.AppWidgetContainerParent">
+    <style name="Theme.Noverflow.AppWidgetContainer" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Apply padding to avoid the content of the widget colliding with the rounded corners -->
         <item name="appWidgetPadding">16dp</item>
     </style>

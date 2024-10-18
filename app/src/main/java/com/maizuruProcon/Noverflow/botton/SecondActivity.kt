@@ -13,6 +13,7 @@ import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.util.Log
+import android.view.View
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.zxing.BarcodeFormat
@@ -37,6 +38,7 @@ class SecondActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         val btnStart1: Button = findViewById(R.id.btnStart1)// ボタンの取得
+
         btnStart1.setOnClickListener {// ボタンを押したら次の画面へ
 
             // ボタンの状態をSharedPreferencesに保存
@@ -107,6 +109,7 @@ class SecondActivity : AppCompatActivity() {
         val totalCount = counts.sum()
         if (totalCount == 0) {
             startActivity(Intent(this, KakuninActivity::class.java))
+            //kakunin_text.visibility = View.GONE
         } else if (totalCount > 0) {
             val randomNumber = generateRandomFourDigitNumber()
             println("Random 4-digit number: $randomNumber")

@@ -22,6 +22,7 @@ import android.graphics.BitmapFactory
 import getMapFieldValueSum
 import updateFieldDataWithOption
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

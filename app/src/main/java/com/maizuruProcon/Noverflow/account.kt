@@ -41,7 +41,7 @@ class account: AppCompatActivity()  {
                 updateImage(remainder, imageView)// 余りの値に基づいて画像を変更
 
                 val level_text: TextView = findViewById(R.id.textViewQuotient)//今のレベルの表示
-                level_text.text = "your level : ${quotient}"
+                level_text.text = "Your Level : ${quotient}"
 
                 val total_text: TextView = findViewById(R.id.all_total)//合計の表示
                 total_text.text = "合計${total}個"
