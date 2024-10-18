@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import getFieldData
 import getMapFieldValueSum
+import android.widget.Button
 
 class account: AppCompatActivity()  {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +20,7 @@ class account: AppCompatActivity()  {
         val counts = IntArray(4) // 各ゴミのカウントを格納する配列
 
         // ボタンを取得
-        val backButton: ImageButton = findViewById(R.id.backbutton)
+        val backButton: Button = findViewById(R.id.backbutton)
         val imageView: ImageView = findViewById(R.id.level_bar)
 
         backButton.setOnClickListener {// ボタンが押された時の処理

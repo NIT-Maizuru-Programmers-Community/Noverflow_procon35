@@ -63,7 +63,7 @@ class FourActivity : AppCompatActivity(){
 
                     // 取得したdestinationsリストを使って最寄りの場所を検索
                     val nearestDestination = destinations.zip(infos)
-                        .filter { it.second <= 500 }
+                        .filter { it.second < 500 }
                         .minByOrNull { currentLocation.distanceToAsDouble(it.first) }
                         ?.first
 

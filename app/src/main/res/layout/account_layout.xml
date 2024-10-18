@@ -26,20 +26,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <Button
         android:id="@+id/backbutton"
         android:layout_width="131dp"
         android:layout_height="107dp"
-        android:layout_marginBottom="68dp"
-        android:background="#FFFFFF"
+        android:backgroundTint="@color/buttonColor"
         android:contentDescription="Example"
         android:scaleType="fitXY"
-        android:src="@drawable/button1"
+        android:text="HOME"
+        android:textSize="28sp"
         android:translationZ="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.057"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.943" />
 
     <ImageView
         android:id="@+id/level_bar"
@@ -87,15 +89,15 @@
 
     <TextView
         android:id="@+id/moeru_total"
-        android:translationZ="2dp"
-        android:background="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="364dp"
+        android:background="#FFFFFF"
         android:text="個"
         android:textSize="30sp"
+        android:translationZ="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.448"
+        app:layout_constraintHorizontal_bias="0.427"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -116,15 +118,15 @@
 
     <TextView
         android:id="@+id/pet_total"
-        android:translationZ="2dp"
-        android:background="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="480dp"
+        android:background="#FFFFFF"
         android:text="個"
         android:textSize="30sp"
+        android:translationZ="2dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.448"
+        app:layout_constraintHorizontal_bias="0.427"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -216,15 +218,32 @@
         android:id="@+id/all_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="92dp"
         android:background="#FFFFFF"
-        android:text="合計\n個"
+        android:text="合計個"
         android:textSize="30sp"
         android:translationZ="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.746"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.753"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.764" />
+
+    <ImageView
+        android:id="@+id/Noverflow"
+        android:layout_width="138dp"
+        android:layout_height="141dp"
+        android:layout_gravity="center"
+        android:background="?attr/selectableItemBackground"
+        android:scaleType="fitCenter"
+        android:src="@drawable/app_icon"
+        android:translationZ="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.904"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.972" />
 
     <ImageView
         android:id="@+id/back1"

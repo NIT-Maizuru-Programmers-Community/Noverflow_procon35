@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.TextView
 import com.maizuruProcon.Noverflow.R
 import com.maizuruProcon.Noverflow.MainActivity
-import com.maizuruProcon.Noverflow.KakuninActivity
 import com.maizuruProcon.Noverflow.databinding.ActivitySecondBinding
 import android.content.Context
 import android.util.Log
@@ -30,12 +29,18 @@ class SecondActivity : AppCompatActivity() {
     private val counts = IntArray(4) // 各ゴミのカウントを格納する配列
     private lateinit var binding: ActivitySecondBinding
     private lateinit var listenerRegistration: ListenerRegistration
+    private val kakunin_Text: TextView by lazy {
+        findViewById<TextView>(R.id.kakunin)
+    }
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySecondBinding.inflate(layoutInflater)
         setContentView(binding.root)
         FirebaseApp.initializeApp(this)
+
+        kakunin_Text.visibility = View.GONE
 
         val btnStart1: Button = findViewById(R.id.btnStart1)// ボタンの取得
 
@@ -108,9 +113,10 @@ class SecondActivity : AppCompatActivity() {
         // 合計の計算
         val totalCount = counts.sum()
         if (totalCount == 0) {
-            startActivity(Intent(this, KakuninActivity::class.java))
-            //kakunin_text.visibility = View.GONE
+            //startActivity(Intent(this, KakuninActivity::class.java))
+            kakunin_Text.visibility = View.VISIBLE
         } else if (totalCount > 0) {
+
             val randomNumber = generateRandomFourDigitNumber()
             println("Random 4-digit number: $randomNumber")
 
@@ -157,6 +163,7 @@ class SecondActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("QR_CODE", qrCode)
             startActivity(intent)
+
         }
     }
 

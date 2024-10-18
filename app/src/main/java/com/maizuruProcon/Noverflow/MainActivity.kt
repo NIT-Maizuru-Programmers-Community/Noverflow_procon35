@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnStart.apply {
             setBackgroundResource(R.drawable.design) // 背景を設定
             text = "捨てる" // テキストを設定
-            textSize = 80f // テキストサイズを設定
+            textSize = 60f // テキストサイズを設定
             isEnabled = true // ボタンを有効にする
         }
 
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
             // ボタンの状態を元に戻す
             binding.btnStart.apply {
                 setBackgroundResource(R.drawable.design) // 元の背景に戻す
-                textSize = 80f // テキストサイズを設定
+                textSize = 60f // テキストサイズを設定
                 text = "捨てる" // テキストを「捨てる」に戻す
                 isEnabled = true // ボタンを有効にする
             }
@@ -175,7 +175,7 @@ class MainActivity : AppCompatActivity() {
 
                     binding.btnStart.apply {// ボタンの状態を元に戻す
                         setBackgroundResource(R.drawable.design) // 元の背景に戻す
-                        textSize = 80f // テキストサイズを設定
+                        textSize = 60f // テキストサイズを設定
                         text = "捨てる" // テキストを「捨てる」に戻す
                         isEnabled = true // ボタンを有効にする
                     }
