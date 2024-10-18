@@ -2,7 +2,6 @@ package com.maizuruProcon.Noverflow.botton
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -15,13 +14,8 @@ import android.util.Log
 import android.view.View
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.MultiFormatWriter
-import com.google.zxing.common.BitMatrix
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.maizuruProcon.Noverflow.QRCodeUtils.generateRandomFourDigitNumber
+import com.maizuruProcon.Noverflow.QRCodeUtils.createQrCode
 import updateFieldDataWithOption
 
 class SecondActivity : AppCompatActivity() {
@@ -56,8 +50,7 @@ class SecondActivity : AppCompatActivity() {
             handleStartButtonClick(btnStart1)
         }
 
-        // 各ゴミカウントのボタン設定
-        setupCountButtons()
+        setupCountButtons()// 各ゴミカウントのボタン設定
 
         // 戻るボタン
         val btnBack: Button = findViewById(R.id.btnBack)
@@ -106,7 +99,7 @@ class SecondActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
             putBoolean("btnStartDisabled", true)
-            putString("btnStartText", "利用不可") // ボタンのテキストを「利用不可」に設定
+            putString("btnStartText", "利用不可")
             apply()
         }
 
@@ -133,67 +126,28 @@ class SecondActivity : AppCompatActivity() {
                     Log.e("Firestore", "Error updating field", exception)
                 }
             )
-            val data = mapOf(
-                "burningGarbage" to counts[0],
-                "plasticGarbage" to counts[1],
-                "bottles" to counts[2],
-                "cans" to counts[3]
-            )
 
-            for ((key, value) in data) {
-                updateFieldDataWithOption(
-                    collectionName = "noverflow-apps",
-                    documentId = "pixel4a",
-                    fieldName = "garbages.$key",  // フィールド名を "garbages.<key>" に
-                    value = value,                // 値を更新
-                    updateMode = UpdateMode.INCREMENT,
-                    onSuccess = {
-                        Log.d("Firestore", "$key updated successfully with value $value")
-                    },
-                    onFailure = { exception ->
-                        Log.e("Firestore", "Error updating $key", exception)
-                    }
-                )
+            val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+            with(countsPref.edit()) {
+                putInt("burningGarbage", counts[0])
+                putInt("plasticGarbage", counts[1])
+                putInt("bottles", counts[2])
+                putInt("cans", counts[3])
+                apply()
             }
 
+            val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
+            val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
+            val retrievedBottles = countsPref.getInt("bottles", -1)
+            val retrievedCans = countsPref.getInt("cans", -1)
+
+            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
 
             val qrCode = createQrCode(randomNumber)// QRコードを生成
 
-            // QRコードをBitmapとしてIntentに渡す
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)// QRコードをBitmapとしてIntentに渡す
             intent.putExtra("QR_CODE", qrCode)
             startActivity(intent)
-
-        }
-    }
-
-    private fun createBitMatrix(data: String): BitMatrix? {
-        val multiFormatWriter = MultiFormatWriter()
-        val hints = mapOf(
-            EncodeHintType.MARGIN to 0,
-            EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.L
-        )
-
-        return multiFormatWriter.encode(
-            data,
-            BarcodeFormat.QR_CODE,
-            170,
-            200,
-            hints
-        )
-    }
-
-    private fun createBitmap(bitMatrix: BitMatrix): Bitmap {
-        val barcodeEncoder = BarcodeEncoder()
-        return barcodeEncoder.createBitmap(bitMatrix)
-    }
-
-    private fun createQrCode(data: String): Bitmap? {
-        return try {
-            val bitMatrix = createBitMatrix(data)
-            bitMatrix?.let { createBitmap(it) }
-        } catch (e: Exception) {
-            null
         }
     }
 }

@@ -19,6 +19,9 @@ import com.maizuruProcon.Noverflow.databinding.ActivityMainBinding
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ListenerRegistration
 import android.graphics.BitmapFactory
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import getMapFieldValueSum
 import updateFieldDataWithOption
 
@@ -36,8 +39,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
+
+        initializeCounts()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -45,7 +51,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // アプリ起動時にボタンの初期状態を設定
@@ -78,31 +83,40 @@ class MainActivity : AppCompatActivity() {
         val mapButton :Button =findViewById(R.id.mapButton)
         val clearButton: Button = findViewById(R.id.clearButton)
 
-        //キャンセルボタンの実装
-        clearButton.setOnClickListener {
-            // QRコード更新タイマーを停止
+
+        binding.clearButton.setOnClickListener {
             handler.removeCallbacksAndMessages(null)
-
-            // TimerFragmentのタイマーを停止
             timerFragment.stopTimer()
-
             qrImage.setImageBitmap(null)
-            qrImage.setBackgroundResource(R.drawable.qr_code_border) // デフォルトの背景画像に戻す
+            qrImage.setBackgroundResource(R.drawable.qr_code_border)
 
-            // SharedPreferencesの状態をリセット
+            val sharedPref = getSharedPreferences("ButtonState", Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
                 putBoolean("btnStartDisabled", false)
-                putString("btnStartText", "捨てる") // ボタンのテキストを「捨てる」に戻す
+                putString("btnStartText", "捨てる")
                 apply()
             }
 
-            // ボタンの状態を元に戻す
             binding.btnStart.apply {
-                setBackgroundResource(R.drawable.design) // 元の背景に戻す
-                textSize = 60f // テキストサイズを設定
-                text = "捨てる" // テキストを「捨てる」に戻す
-                isEnabled = true // ボタンを有効にする
+                setBackgroundResource(R.drawable.design)
+                textSize = 80f
+                text = "捨てる"
+                isEnabled = true
             }
+
+            val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+            with(countsPref.edit()) {
+                putInt("burningGarbage", 0)
+                putInt("plasticGarbage", 0)
+                putInt("bottles", 0)
+                putInt("cans", 0)
+                apply()
+            }
+            val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
+            val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
+            val retrievedBottles = countsPref.getInt("bottles", -1)
+            val retrievedCans = countsPref.getInt("cans", -1)
+            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
         }
 
         qrImage = findViewById(R.id.qr_code_image)
@@ -110,18 +124,15 @@ class MainActivity : AppCompatActivity() {
 
         // ボタンが押された時の処理(画面遷移)
         btnstart.setOnClickListener {
-            // Intentを作成してsecondActivityに遷移
-            val intent = Intent(this, SecondActivity::class.java)
+            val intent = Intent(this, SecondActivity::class.java)// Intentを作成してsecondActivityに遷移
             startActivity(intent)
         }
         imageButton.setOnClickListener {
-            // Intentを作成してaccountActivityに遷移
-            val intent = Intent(this, account::class.java)
+            val intent = Intent(this, account::class.java)// Intentを作成してaccountActivityに遷移
             startActivity(intent)
         }
         mapButton.setOnClickListener{
-            // Intentを作成してfourActivityに遷移
-            val intent= Intent(this, FourActivity::class.java)
+            val intent= Intent(this, FourActivity::class.java)// Intentを作成してfourActivityに遷移
             startActivity(intent)
         }
 
@@ -142,6 +153,62 @@ class MainActivity : AppCompatActivity() {
                 Log.e("Firestore", "合計値の取得に失敗しました")
             }
         }
+
+        listenerRegistration = FirebaseFirestore.getInstance()
+            .collection("garbageBoxes") // コレクション名を指定
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w("Firestore", "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    for (document in snapshot.documents) {
+                        val flag = document.getBoolean("flag") ?: false
+                        if (flag) {
+                            val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+                            val retrievedBurningGarbage = countsPref.getInt("burningGarbage", -1)
+                            val retrievedPlasticGarbage = countsPref.getInt("plasticGarbage", -1)
+                            val retrievedBottles = countsPref.getInt("bottles", -1)
+                            val retrievedCans = countsPref.getInt("cans", -1)
+
+                            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
+
+                            // Firestoreにアップロード
+                            updateCountsInFirestore(retrievedBurningGarbage, retrievedPlasticGarbage, retrievedBottles, retrievedCans)
+
+                            handler.removeCallbacksAndMessages(null)
+                            timerFragment.stopTimer()
+                            qrImage.setImageBitmap(null)
+                            qrImage.setBackgroundResource(R.drawable.qr_code_border)
+
+                            with(sharedPref.edit()) {
+                                putBoolean("btnStartDisabled", false)
+                                putString("btnStartText", "捨てる")
+                                apply()
+                            }
+
+                            binding.btnStart.apply {
+                                setBackgroundResource(R.drawable.design)
+                                textSize = 80f
+                                text = "捨てる"
+                                isEnabled = true
+                            }
+
+                            with(countsPref.edit()) {
+                                putInt("burningGarbage", 0)
+                                putInt("plasticGarbage", 0)
+                                putInt("bottles", 0)
+                                putInt("cans", 0)
+                                apply()
+                            }
+                            Log.d("CountsDebug", "Retrieved - Burning Garbage: $retrievedBurningGarbage, Plastic Garbage: $retrievedPlasticGarbage, Bottles: $retrievedBottles, Cans: $retrievedCans")
+
+                            updateAllFlagsToFalse()
+                        }
+                    }
+                }
+            }
 
         val byteArray = intent.getByteArrayExtra("QR_CODE")// IntentからQRコードのバイト配列を取得
 
@@ -193,6 +260,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+        with(countsPref.edit()) {
+            putInt("burningGarbage", 0)
+            putInt("plasticGarbage", 0)
+            putInt("bottles", 0)
+            putInt("cans", 0)
+            apply()
+        }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        FirestoreUtils.stopListeningToFlagChanges() // リスナーを停止
+    }
+
     private fun stopQrUpdateTimer() {// タイマーを停止するメソッド
         handler.removeCallbacksAndMessages(null)
     }
@@ -227,5 +310,68 @@ class MainActivity : AppCompatActivity() {
         qrBitmap?.let {
             qrImage.setImageBitmap(it)
         }
+    }
+
+    private fun initializeCounts() {
+        val countsPref = getSharedPreferences("CountsData", Context.MODE_PRIVATE)
+
+        // 初期値を設定する条件を指定（ここでは例として、デフォルト値が設定されているかどうかをチェック）
+        if (countsPref.getInt("burningGarbage", -1) == -1) {
+            // 初期値を保存
+            with(countsPref.edit()) {
+                putInt("burningGarbage", 0)
+                putInt("plasticGarbage", 0)
+                putInt("bottles", 0)
+                putInt("cans", 0)
+                apply()
+            }
+            Log.d("CountsData", "Initialized CountsData with zeros.")
+        }
+    }
+    private fun updateCountsInFirestore(burningGarbage: Int, plasticGarbage: Int, bottles: Int, cans: Int) {
+        val db = FirebaseFirestore.getInstance()
+        val data = hashMapOf(
+            "burningGarbage" to burningGarbage,
+            "plasticGarbage" to plasticGarbage,
+            "bottles" to bottles,
+            "cans" to cans
+        )
+
+        for ((key, value) in data) {
+            updateFieldDataWithOption(
+                collectionName = "noverflow-apps",
+                documentId = "pixel4a",
+                fieldName = "garbages.$key",  // フィールド名を "garbages.<key>" に
+                value = value,                // 値を更新
+                updateMode = UpdateMode.INCREMENT,
+                onSuccess = {
+                    Log.d("Firestore", "$key updated successfully with value $value")
+                },
+                onFailure = { exception ->
+                    Log.e("Firestore", "Error updating $key", exception)
+                }
+            )
+        }
+    }
+    private fun updateAllFlagsToFalse() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("garbageBoxes") // 対象のコレクション名を指定
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val docId = document.id
+                    db.collection("garbageBoxes").document(docId)
+                        .update("flag", false)
+                        .addOnSuccessListener {
+                            Log.d("Firestore", "Document $docId successfully updated with flag=false")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Firestore", "Error updating document $docId", e)
+                        }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error getting documents", e)
+            }
     }
 }

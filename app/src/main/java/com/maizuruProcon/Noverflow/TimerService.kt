@@ -11,40 +11,34 @@ class TimerService : Service() {
     private var countDownTimer: CountDownTimer? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // タイマーを開始
-        startTimer()
+        startTimer()// タイマーを開始
         return START_STICKY // サービスが終了しても再起動されるようにする
     }
 
     private fun startTimer() {
         countDownTimer = object : CountDownTimer(5 * 60 * 1000, 1000) { // 5分間のタイマー
             override fun onTick(millisUntilFinished: Long) {
-                // 1秒ごとの処理
-                Log.d("TimerService", "Remaining time: $millisUntilFinished")
+                Log.d("TimerService", "Remaining time: $millisUntilFinished")// 1秒ごとの処理
             }
 
             override fun onFinish() {
-                // タイマー終了時の処理
-                Log.d("TimerService", "Timer finished")
 
-                // タイマー終了をブロードキャストで通知
-                val broadcastIntent = Intent("TIMER_FINISHED")
+                Log.d("TimerService", "Timer finished")// タイマー終了時の処理
+
+                val broadcastIntent = Intent("TIMER_FINISHED")// タイマー終了をブロードキャストで通知
                 sendBroadcast(broadcastIntent)
 
-                // タイマーを再スタート
-                startTimer()
+                startTimer()// タイマーを再スタート
             }
         }.start()
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        // バインドは必要ないのでnullを返す
-        return null
+        return null// バインドは必要ないのでnullを返す
     }
 
     override fun onDestroy() {
-        // サービスが終了されたときにタイマーを停止
-        countDownTimer?.cancel()
+        countDownTimer?.cancel()// サービスが終了されたときにタイマーを停止
         super.onDestroy()
     }
 }
